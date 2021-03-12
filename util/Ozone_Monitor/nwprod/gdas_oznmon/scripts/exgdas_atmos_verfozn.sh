@@ -3,33 +3,10 @@
 set -ax
 
 ################################################################################
-####  UNIX Script Documentation Block
-#                      .                                             .
-# Script name:         exgdas_vrfyozn.sh
-# Script description:  Runs data extract/validation for global ozone diag data
+# exgdas_vrfyozn.sh
 #
-# Author:        Ed Safford       Org: NP23         Date: 2012-01-18
-#
-# Abstract: This script runs the data extract/validation portion of the 
-#           OznMon package.  
-#
-# Script history log:
-#
-#   Input script positional parameters:
-#     1             Current analysis date in yyyymmddhh format
-#                   defaults to PDY; required
-#     2             cycle time in cc format
-#                   defaults to cyc; required
-#
-#     input data : $oznstat
-#
-#     output data:  
-#
-#  Remarks:
-#
-#    Condition codes
-#       0 - no problem encountered
-#      >0 - some problem encountered
+# This script runs the data extract/validation portion of the Ozone Monitor
+# (OznMon) DA package.  
 #
 ################################################################################
 export scr=exgdas_vrfyozn.sh
@@ -64,15 +41,14 @@ export USHoznmon=${USHoznmon:-$HOMEoznmon/ush}
 
 
 #  Filenames
-export oznstat=${oznstat:-$COMIN/gdas.t${cyc}z.oznstat}
-export satype_file=${satype_file:-$FIXgdas_ozn/gdas_oznmon_satype.txt}
+oznstat=${oznstat:-$COMIN/gdas.t${cyc}z.oznstat}
+export SATYPE_FILE=${SATYPE_FILE:-$FIXgdas_ozn/gdas_oznmon_satype.txt}
 
 #  Other variables
 #export USE_ANL=${USE_ANL:-1}
 export PDATE=${PDY}${cyc}
 export DO_DATA_RPT=${DO_DATA_RPT:-1}
 export NCP=${NCP:-/bin/cp}
-export NDATE=${NDATE:-/nwprod/util/exec/ndate}
 
 
 ##################################################################

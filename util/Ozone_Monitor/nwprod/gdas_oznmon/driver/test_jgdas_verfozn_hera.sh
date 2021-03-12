@@ -26,12 +26,6 @@ export DATAROOT=${DATAROOT:-/scratch1/NCEPDEV/da/Edward.Safford/noscrub/test_dat
 export COMROOT=${COMROOT:-/scratch2/NCEPDEV/stmp3/${LOGNAME}/com}
 export OZN_WORK_DIR=${OZN_WORK_DIR:-/scratch2/NCEPDEV/stmp3/${LOGNAME}/oznmon.${pid}}
 
-#------------------------------------------------------------
-# Specify versions
-#
-export gdas_oznmon_ver=v2.0.0
-export shared_oznmon_ver=v2.0.0
-
 
 #------------------------------------------------------------
 # Add nwpara tools to path
@@ -47,7 +41,7 @@ export shared_oznmon_ver=v2.0.0
 
 export OZNMON_SUFFIX=${OZNMON_SUFFIX:-testozn}
 export NWTEST=${NWTEST:-/scratch1/NCEPDEV/da/${LOGNAME}/noscrub/ProdGSI/util/Ozone_Monitor/nwprod}
-export HOMEgdas_ozn=${HOMEgdas_ozn:-${NWTEST}/gdas_oznmon.${gdas_oznmon_ver}}
+export HOMEgdas_ozn=${HOMEgdas_ozn:-${NWTEST}/gdas_oznmon}
 export PARMgdas_ozn=${PARMgdas_ozn:-${HOMEgdas_ozn}/parm}
 export FIXgdas_ozn=${FIXgdas_ozn:-${HOMEgdas_ozn}/fix}
 
@@ -56,7 +50,7 @@ export PARMgfs_ozn=${PARMgfs_ozn:-${PARMgdas_ozn}}
 export FIXgfs_ozn=${FIXgfs_ozn:-${FIXgdas_ozn}}
 
 export JOBGLOBAL=${JOBGLOBAL:-${HOMEgdas_ozn}/jobs}
-export HOMEoznmon=${HOMEoznmon:-${NWTEST}/oznmon_shared.${shared_oznmon_ver}}
+export HOMEoznmon=${HOMEoznmon:-${NWTEST}/oznmon_shared}
 export COM_IN=${COM_IN:-${DATAROOT}}
 export OZN_TANKDIR=${OZN_TANKDIR:-${COMROOT}/${OZNMON_SUFFIX}}
 
@@ -82,7 +76,7 @@ export PATH=$PATH:${COMROOT}
 #------------------------------------------------------------
 # Execute job
 #
-$JOBGLOBAL/JGDAS_VERFOZN
+$JOBGLOBAL/JGDAS_ATMOS_VERFOZN
 
 exit
 
