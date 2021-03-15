@@ -19,7 +19,7 @@
 
 set -x
 export OZNMON_NEW_HDR=${OZN_NEW_HDR:-0}
-export PDATE=${PDATE:-2019083100}
+export PDATE=${PDATE:-2021031100}
 export NET=${NET:-gfs}
 export RUN=${RUN:-gdas}
 
@@ -47,34 +47,29 @@ module list
 
 
 #------------------------------------------------------------
-# WCOSS environment settings
-#
-export POE=YES
-
-#------------------------------------------------------------
 # Set user specific variables
 #
-export OZNMON_SUFFIX=${OZNMON_SUFFIX:-testozn}
-export NWTEST=${NWTEST:-/gpfs/hps3/emc/da/noscrub/Edward.Safford/ProdGSI/util/Ozone_Monitor/nwprod}
 
+export OZNMON_SUFFIX=${OZNMON_SUFFIX:-testozn}
+export NWTEST=${NWTEST:-/gpfs/hps3/emc/da/noscrub/Edward.Safford/update/util/Ozone_Monitor/nwprod}
 export HOMEgdas_ozn=${NWTEST}/gdas_oznmon
 export PARMgdas_ozn=${HOMEgdas_ozn}/parm
-export SCRgdas_ozn=${HOMEgdas_ozn}/scripts
 export FIXgdas_ozn=${HOMEgdas_ozn}/fix
-JOBgdas_ozn=${HOMEgdas_ozn}/jobs
 
-export HOMEgfs_ozn=${HOMEgfs_ozn:-${HOMEgdas_ozn}}
+export HOMEgfs=${HOMEgfs:-${HOMEgdas_ozn}}
+export HOMEgfs_ozn=${HOMEgfs_ozn:-${HOMEgfs}}
 export PARMgfs_ozn=${PARMgfs_ozn:-${PARMgdas_ozn}}
 export FIXgfs_ozn=${FIXgfs_ozn:-${FIXgdas_ozn}}
 
 export HOMEoznmon=${NWTEST}/oznmon_shared
 export COM_IN=${COM_IN:-$DATAROOT}
 export OZN_TANKDIR=${OZN_TANKDIR:-${COMROOT}/${OZNMON_SUFFIX}}
+export OZN_TANKDIR=${OZN_TANKDIR:-${COMROOT}/${OZNMON_SUFFIX}}
 
 #------------------------------------------------------------
 # Execute job
 #
-${JOBgdas_ozn}/JGDAS_ATMOS_VERFOZN
+${HOMEgdas_ozn}/jobs/JGDAS_ATMOS_VERFOZN
 
 exit
 
