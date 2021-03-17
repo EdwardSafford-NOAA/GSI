@@ -77,7 +77,7 @@ for dsrc in ${data_source}; do
       $SUB --account ${ACCOUNT} -n $ctr  -o ${logf} -D . -J ${job} --time=10 \
            --wrap "srun -l --multi-prog ${cmdfile}"
 
-   elif [[ ${MY_MACHINE} = "cray" ]]; then
+   elif [[ ${MY_MACHINE} = "wcoss_c" ]]; then
 
       $SUB -q ${JOB_QUEUE} -P ${PROJECT} -o ${logf} -e ${errf} \
            -R "select[mem>100] rusage[mem=100]" \

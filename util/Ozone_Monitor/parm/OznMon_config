@@ -148,7 +148,7 @@ if [[ $OZNMON_CONFIG -ne 1 ]]; then
       export GRADS=`which grads`
       export STNMAP=`which stnmap` 
  
-   elif [[ $MY_MACHINE = "cray" ]]; then
+   elif [[ $MY_MACHINE = "wcoss_c" ]]; then
       . /opt/modules/3.2.6.7/init/sh
       module use -a /gpfs/hps/nco/ops/nwprod/modulefiles
       module use -a /usrx/local/dev/modulefiles

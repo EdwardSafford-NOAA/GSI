@@ -212,13 +212,6 @@ if [[ $MY_MACHINE = "hera" ]]; then
 	--ntasks=1 --mem=5g \
 	${jobfile}
 	
-elif [[ $MY_MACHINE = "wcoss" ]]; then
-
-   $SUB -q $JOB_QUEUE -P $PROJECT -M 50 -R affinity[core] \
-        -o ${OZN_LOGdir}/DE.${PDY}.${cyc}.log \
-        -e ${OZN_LOGdir}/DE.${PDY}.${cyc}.err \
-        -W 0:05 -J ${job} -cwd ${PWD} $jobfile
-
 elif [[ $MY_MACHINE = "wcoss_d" ]]; then
 
    $SUB -q $JOB_QUEUE -P $PROJECT -M 400 -R affinity[core] \
@@ -226,7 +219,7 @@ elif [[ $MY_MACHINE = "wcoss_d" ]]; then
         -e ${OZN_LOGdir}/DE.${PDY}.${cyc}.err \
         -W 0:05 -J ${job} -cwd ${PWD} $jobfile
 
-elif [[ $MY_MACHINE = "cray" ]]; then
+elif [[ $MY_MACHINE = "wcoss_c" ]]; then
 
   $SUB -q $JOB_QUEUE -P $PROJECT -o ${OZN_LOGdir}/DE.${PDY}.${cyc}.log \
         -e ${OZN_LOGdir}/DE.${PDY}.${cyc}.err \

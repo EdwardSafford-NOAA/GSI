@@ -112,7 +112,7 @@ fi
 transfer_script=${OZN_IG_SCRIPTS}/transfer.sh
 job=${OZNMON_SUFFIX}_ozn_transfer
 
-if [[ $MY_MACHINE = "wcoss" || $MY_MACHINE = "wcoss_d" ]]; then
+if [[ $MY_MACHINE = "wcoss_d" ]]; then
 
    job_queue="transfer"
    if [[ $MY_MACHINE = "wcoss_d" ]]; then
@@ -128,7 +128,7 @@ if [[ $MY_MACHINE = "wcoss" || $MY_MACHINE = "wcoss_d" ]]; then
         -R affinity[core] -J ${job} -cwd ${OZN_IG_SCRIPTS} \
         ${transfer_script} 
    
-elif [[ $MY_MACHINE = "cray" ]]; then
+elif [[ $MY_MACHINE = "wcoss_c" ]]; then
 
    echo ""
 #   ${OZN_IG_SCRIPTS}/transfer.sh ${OZNMON_SUFFIX} \
