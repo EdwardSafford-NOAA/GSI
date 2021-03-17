@@ -11,9 +11,9 @@
 #
 #	OZNMON_SUFFIX = data source identifier which matches data 
 #		  	in the TANKverf/stats directory.
-#       -p --pdate    = specified cycle to plot.  If not specified the
+#       -p|--pdate    = specified cycle to plot.  If not specified the
 #			last available date will be plotted.
-#	-r --run      = $RUN value, gdas|gfs, default is gdas.
+#	-r|--run      = $RUN value, gdas|gfs, default is gdas.
 #       -c1|--comp1   = define first source to plot as comparison (time
 #			   series plots only)
 #       -c2|--comp2   = define second source to plot as comparison (time
@@ -52,7 +52,7 @@ do
 
    case $key in
       -p|--pdate)
-         PDATE="$2"
+         pdate="$2"
          shift # past argument
       ;;
       -r|--run)
@@ -96,7 +96,7 @@ if [[ ${#RUN} -le 0 ]]; then
 fi
 
 echo "OZNMON_SUFFIX = $OZNMON_SUFFIX"
-echo "PDATE         = $PDATE"
+echo "pdate         = $pdate"
 echo "RUN           = $RUN"
 
 
@@ -114,15 +114,6 @@ this_dir=`dirname $0`
 #--------------------------------------------------
 top_parm=${this_dir}/../../parm
 
-
-oznmon_version_file=${oznmon_version:-${top_parm}/OznMon.ver}
-if [[ -s ${oznmon_version_file} ]]; then
-   . ${oznmon_version_file}
-   echo "able to source ${oznmon_version_file}"
-else
-   echo "Unable to source ${oznmon_version_file} file"
-   exit 2
-fi
 
 oznmon_user_settings=${oznmon_user_settings:-${top_parm}/OznMon_user_settings}
 if [[ -s ${oznmon_user_settings} ]]; then
@@ -172,17 +163,39 @@ fi
 
 
 #--------------------------------------------------------------------
-#  If PDATE wasn't specified as an argument then plot the last
-#  available cycle.
+# Determine cycle to plot.  Exit if cycle is > last available
+# data.
+#
+# PDATE can be set one of 3 ways.  This is the order of priority:
+#
+#   1.  Specified via command line argument
+#   2.  Read from ${OZN_IMGN_TANKbase}/last_plot_time file and
+#        advanced one cycle.
+#   3.  Using the last available cycle for which there is
+#        data in ${TANKDIR}.
+#
+# If option 2 has been used the ${IMGNDIR}/last_plot_time file
+# will be updated with ${PDATE} if the plot is able to run.
 #--------------------------------------------------------------------
-if [[ ${#PDATE} -le 0 ]]; then
-   echo "PDATE not specified:  setting PDATE using last cycle"
-   PDATE=`${OZN_IG_SCRIPTS}/find_cycle.pl -run ${RUN} -cyc 1 -dir ${TANKDIR}`
-else
-   echo "PDATE was specified:  $PDATE"
+
+echo "OZN_IMGN_TANKbase = ${OZN_IMGN_TANKbase}"
+last_plot_time=${OZN_IMGN_TANKbase}/${RUN}/oznmon/last_plot_time
+echo "last_plot_time file = ${last_plot_time}"
+
+latest_data=`${OZN_IG_SCRIPTS}/find_cycle.pl -run gdas -cyc 1 -dir ${OZN_STATS_TANKDIR}`
+
+if [[ ${#pdate} -le 0 ]]; then
+   if [[ -e ${last_plot_time} ]]; then
+      echo " USING last_plot_time file"
+      last_plot=`cat ${last_plot_time}`
+      pdate=`$NDATE +6 ${last_plot}`
+   else
+      echo " USING find_cycle file"
+      pdate=${latest_data}
+   fi
 fi
 
-export PDATE=$PDATE
+export PDATE=$pdate
 export PDY=`echo $PDATE|cut -c1-8`
 export cyc=`echo $PDATE|cut -c9-10`
 
@@ -230,6 +243,20 @@ ${OZN_IG_SCRIPTS}/mk_summary.sh
 if [[ $DO_DATA_RPT -eq 1 ]]; then
    ${OZN_IG_SCRIPTS}/mk_err_rpt.sh
 fi
+
+#--------------------------------------------------------------------
+#  Update the last_plot_time file if found
+#--------------------------------------------------------------------
+if [[ -e ${last_plot_time} ]]; then
+   echo "update last_plot_time file"
+   echo ${PDATE} > ${last_plot_time}
+fi
+
+
+#--------------------------------------------------------------------
+#  Remove all but the last 30 cycles worth of data image files.
+#--------------------------------------------------------------------
+#${IG_SCRIPTS}/rm_img_files.pl --dir ${TANKimg}/radmon/pngs --nfl 30
 
 echo "end OznMon_Plt.sh"
 exit

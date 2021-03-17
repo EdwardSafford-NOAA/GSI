@@ -9,11 +9,6 @@
 #-------------------------------------------------------------------
 
 
-#   my $arch;
-#   $arch = ` uname -s | tr '[:upper:]' '[:lower:]' `;
-#   $arch =~ s/^\s+|\s+$//g;
-#   my $my_os = "export MY_OS=$arch";
-
    my $machine = "";
   
    #
@@ -35,9 +30,6 @@
    } 
    elsif( $host =~ /login/ ) {
       $machine = "cray";
-   }
-   elsif( $host =~ /t/ || $host =~ /g/ ){	# wcoss nodes are tXXaY and gXXaY
-      $machine = "wcoss";
    }
    elsif( $host =~ /v/ || $host =~ /m/ ){	# wcoss_d nodes are vXXaY and mXXaY
       $machine = "wcoss_d";
