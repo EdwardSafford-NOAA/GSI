@@ -258,6 +258,14 @@ EOF
    ${NCP} stdout.time.tar.${Z} ${TANKverf_ozn}/time/
 fi
 
+#-------------------------------------------------------
+# Conditionally remove data files older than 40 days
+#
+if [[ ${CLEAN_TANKDIR} -eq 1 ]]; then
+   ./clean_tankdir.sh glb 40
+fi 
+
+
 echo "ozn_xtrct.sh HAS ENDED, iret = ${iret}"
 
 exit ${iret}

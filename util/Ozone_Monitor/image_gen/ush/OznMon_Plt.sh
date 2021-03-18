@@ -256,7 +256,7 @@ fi
 #--------------------------------------------------------------------
 #  Remove all but the last 30 cycles worth of data image files.
 #--------------------------------------------------------------------
-#${IG_SCRIPTS}/rm_img_files.pl --dir ${TANKimg}/radmon/pngs --nfl 30
+${OZN_IG_SCRIPTS}/rm_img_files.pl --dir ${OZN_IMGN_TANKDIR} --nfl 30
 
 echo "end OznMon_Plt.sh"
 exit

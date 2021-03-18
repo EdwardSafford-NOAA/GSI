@@ -90,7 +90,6 @@ fi
 export OZN_TANKDIR=$OZN_STATS_TANKDIR
 export DATAROOT=${STMP_USER}
 
-
 if [[ -e ${OZN_TANKDIR}/info/gdas_oznmon_satype.txt ]]; then
    export satype_file=${satype_file:-${OZN_TANKDIR}/info/gdas_oznmon_satype.txt}
 fi
@@ -125,7 +124,11 @@ export cyc=`echo $PDATE|cut -c9-10`
 
 mdate=`$NDATE -24 $PDATE`
 PDYm1=`echo ${mdate}|cut -c1-8`
+cycm1=`echo ${mdate}|cut -c9-10`
 echo "PDY, cyc, PDYm1 = ${PDY}, ${cyc} ${PDYm1}"
+
+export TANKverf_ozn=${OZN_TANKDIR}/${RUN}.${PDY}/${cyc}/oznmon
+export TANKverf_oznM1=${OZN_TANKDIR}/${RUN}.${PDYm1}/${cycm1}/oznmon
 
 pid=${pid:-$$}
 
