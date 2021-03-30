@@ -109,7 +109,6 @@ else
    exit 3
 fi
 
-#export USHradmon=${USHradmon:-$HOMEradmon/ush}
 
 if [[ ${oznmon_file_loc} = "" ]]; then
    oznmon_file_loc=${OZNSTAT_LOCATION}
