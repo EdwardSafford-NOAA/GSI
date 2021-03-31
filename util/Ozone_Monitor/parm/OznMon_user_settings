@@ -73,7 +73,7 @@ export OZN_USE_RUN=${OZN_USE_RUN:-1}
 #  desirable.  It is not normally necesary to apply this to parallels.  
 #  0 = off, 1 = on
 #
-export DO_DATA_RPT=${DO_DATA_RPT:-0}
+export DO_DATA_RPT=${DO_DATA_RPT:-1}
 
 #  MAIL_TO is the the primary recipient of generated email warning messages
 #  (if DO_DATA_RPT = 1).
@@ -117,3 +117,11 @@ export REGIONAL_RR=${REGIONAL_RR:-0}
 #  refresh sources.
 #
 export CYCLE_INTERVAL=${CYCLE_INTERVAL:-6}
+
+
+#
+#  CLEAN_TANKDIR controls automatic removal of old data files in
+#  TANKDIR. 
+#
+#  0 = no automatic removal, 1 = automatic removal
+export CLEAN_TANKDIR=${CLEAN_TANKDIR:=1}
