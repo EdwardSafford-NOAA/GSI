@@ -26,26 +26,11 @@ export COMPONENT=${COMPONENT:-atmos}
 export PDY=${1:-${PDY:?}} 
 export cyc=${2:-${cyc:?}}
 
-#  Directories
-export OZN_WORK_DIR=${OZN_WORK_DIR:-$(pwd)}
-export COM_IN=${COM_IN:-${COMROOT}/${NET}/${envir}}
-export COMIN=${COMIN:-$COM_IN/${RUN}.${PDY}/${cyc}/$COMPONENT}
-
-export HOMEgdas_ozn=${HOMEgdas_ozn:-${NWROOT}/gdas.${gdas_oznmon_ver}}
-export FIXgdas_ozn=${FIXgdas_ozn:-$HOMEgdas/fix}
-
-export HOMEoznmon=${HOMEoznmon:-/${NWROOT}/oznmon_shared.v${shared_oznmon_ver}}
-export EXECoznmon=${EXECoznmon:-$HOMEoznmon/exec}
-export FIXoznmon=${FIXoznmon:-${HOMEoznmon}/fix}
-export USHoznmon=${USHoznmon:-$HOMEoznmon/ush}
-
-
 #  Filenames
 oznstat=${oznstat:-$COMIN/gdas.t${cyc}z.oznstat}
 export SATYPE_FILE=${SATYPE_FILE:-$FIXgdas_ozn/gdas_oznmon_satype.txt}
 
 #  Other variables
-#export USE_ANL=${USE_ANL:-1}
 export PDATE=${PDY}${cyc}
 export DO_DATA_RPT=${DO_DATA_RPT:-1}
 export NCP=${NCP:-/bin/cp}
@@ -53,6 +38,8 @@ export NCP=${NCP:-/bin/cp}
 
 ##################################################################
 # ensure work and TANK dirs exist, verify oznstat is available
+export OZN_WORK_DIR=${OZN_WORK_DIR:-$(pwd)}
+
 if [[ ! -d ${OZN_WORK_DIR} ]]; then
    mkdir $OZN_WORK_DIR
 fi

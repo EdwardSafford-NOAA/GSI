@@ -262,7 +262,7 @@ fi
 # Conditionally remove data files older than 40 days
 #
 if [[ ${CLEAN_TANKDIR} -eq 1 ]]; then
-   ./clean_tankdir.sh glb 40
+   ${HOMEoznmon}/ush/clean_tankdir.sh glb 40
 fi 
 
 

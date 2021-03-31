@@ -156,7 +156,7 @@ export COMROOT=${PTMP_USER}
 if [ ${#oznstat_dir} -gt 0 ]; then
    com_in=${oznstat_dir}
 else
-   com_in=${COM_IN:-/gpfs/hps/nco/ops/com/gfs/prod}
+   com_in=${COM_IN:-/gpfs/dell1/nco/ops/com/gfs/prod}
 fi
 
 export COM_IN=${com_in}
