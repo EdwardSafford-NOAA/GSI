@@ -26,11 +26,9 @@ export COMPONENT=${COMPONENT:-atmos}
 export PDY=${1:-${PDY:?}} 
 export cyc=${2:-${cyc:?}}
 
-#  Filenames
-oznstat=${oznstat:-$COMIN/gdas.t${cyc}z.oznstat}
-export SATYPE_FILE=${SATYPE_FILE:-$FIXgdas_ozn/gdas_oznmon_satype.txt}
 
 #  Other variables
+export SATYPE_FILE=${SATYPE_FILE:-$FIXgdas_ozn/gdas_oznmon_satype.txt}
 export PDATE=${PDY}${cyc}
 export DO_DATA_RPT=${DO_DATA_RPT:-1}
 export NCP=${NCP:-/bin/cp}

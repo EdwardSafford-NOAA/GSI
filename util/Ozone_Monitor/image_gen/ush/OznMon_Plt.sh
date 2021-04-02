@@ -14,10 +14,10 @@
 #       -p|--pdate    = specified cycle to plot.  If not specified the
 #			last available date will be plotted.
 #	-r|--run      = $RUN value, gdas|gfs, default is gdas.
-#       -c1|--comp1   = define first source to plot as comparison (time
-#			   series plots only)
-#       -c2|--comp2   = define second source to plot as comparison (time
-#			   series plots only)
+#       -c1|--comp1   = define first instrument/sat source to plot as comparison
+#                        (applies to time series plots only)
+#       -c2|--comp2   = define second instrument/sat source to plot as comparison
+#                        (applies to time series plots only)
 #
 #	NOTE:  Both COMP1 and COMP2 have to be defined to 
 #	       generate comparison plots as part of the COMP1
@@ -195,68 +195,70 @@ if [[ ${#pdate} -le 0 ]]; then
    fi
 fi
 
-export PDATE=$pdate
-export PDY=`echo $PDATE|cut -c1-8`
-export cyc=`echo $PDATE|cut -c9-10`
+echo "pdate, latest_data = ${pdate} ${latest_data}"
 
-#--------------------------------------------------------------------
-#  Create the WORKDIR and link the data files to it
-#--------------------------------------------------------------------
-export WORKDIR=${STMP_USER}/${OZNMON_SUFFIX}/${RUN}/oznmon/IG.${PDY}.${cyc}
-if [[ -d $WORKDIR ]]; then
-  rm -rf $WORKDIR
-fi
-mkdir $WORKDIR
-cd $WORKDIR
+if [[ ${pdate} -le ${latest_data} ]]; then
+   echo " proceeding with plot"
 
-#--------------------------------------------------------------------
-#  Plot scripts are plot_time.sh and plot_horiz.sh.  The plot_time.sh
-#  script calls plot_summary.sh.  The plot_time & plot_horiz are
-#  submitted jobs.
-#
-#  All plot_* scripts call transfer.sh.  We'll handle that like the
-#  other monitors.
-#--------------------------------------------------------------------
+   export PDATE=$pdate
+   export PDY=`echo $PDATE|cut -c1-8`
+   export cyc=`echo $PDATE|cut -c9-10`
 
-#--------------------------------------------------------------------
-#  export SATYPE
-#  
-#  For the moment we can just load the 
-#  gdas.v2.0.0/fix/gdas_oznmon_satype.txt file.  Eventually DE will
-#  need to compare actual files vs this list (or an updated one in 
-#  TANKDIR/info like RadMon.
-#
-#  Update the search order to use the local copy in $TANKDIR/info
-#  if available.
-#--------------------------------------------------------------------
-if [[ -e ${TANKDIR}/info/gdas_oznmon_satype.txt ]]; then
-   export SATYPE=${SATYPE:-`cat ${TANKDIR}/info/${RUN}_oznmon_satype.txt`}
+   #--------------------------------------------------------------------
+   #  Create the WORKDIR and link the data files to it
+   #--------------------------------------------------------------------
+   export WORKDIR=${STMP_USER}/${OZNMON_SUFFIX}/${RUN}/oznmon/IG.${PDY}.${cyc}
+   if [[ -d $WORKDIR ]]; then
+     rm -rf $WORKDIR
+   fi
+   mkdir $WORKDIR
+   cd $WORKDIR
+
+   #--------------------------------------------------------------------
+   #  Plot scripts are plot_time.sh and plot_horiz.sh.  The plot_time.sh
+   #  script calls plot_summary.sh.  The plot_time & plot_horiz are
+   #  submitted jobs.
+   #
+   #  All plot_* scripts call transfer.sh.  We'll handle that like the
+   #  other monitors.
+   #--------------------------------------------------------------------
+
+   if [[ -e ${TANKDIR}/info/gdas_oznmon_satype.txt ]]; then
+      export SATYPE=${SATYPE:-`cat ${TANKDIR}/info/${RUN}_oznmon_satype.txt`}
+   else
+      export SATYPE=${SATYPE:-`cat ${HOMEgdas_ozn}/fix/${RUN}_oznmon_satype.txt`}
+   fi
+
+
+   ${OZN_IG_SCRIPTS}/mk_horiz.sh
+   ${OZN_IG_SCRIPTS}/mk_time.sh
+   ${OZN_IG_SCRIPTS}/mk_summary.sh
+
+   if [[ $DO_DATA_RPT -eq 1 ]]; then
+      ${OZN_IG_SCRIPTS}/mk_err_rpt.sh
+   fi
+
+   #--------------------------------------------------------------------
+   #  Update the last_plot_time file if found
+   #--------------------------------------------------------------------
+   if [[ -e ${last_plot_time} ]]; then
+      echo "update last_plot_time file"
+      echo ${PDATE} > ${last_plot_time}
+   fi
+
+
+   #--------------------------------------------------------------------
+   #  Remove all but the last 30 cycles worth of data image files.
+   #
+   #  This is not currently necessary -- the OznMon doesn't make any 
+   #  time-stampped plots.  But it's here (borrowed from the RadMon) 
+   #  to meet that contingency. 
+   #--------------------------------------------------------------------
+   #${OZN_IG_SCRIPTS}/rm_img_files.pl --dir ${OZN_IMGN_TANKDIR} --nfl 30
+
 else
-   export SATYPE=${SATYPE:-`cat ${HOMEgdas_ozn}/fix/${RUN}_oznmon_satype.txt`}
+  echo "unable to plot"
 fi
-
-
-${OZN_IG_SCRIPTS}/mk_horiz.sh
-${OZN_IG_SCRIPTS}/mk_time.sh
-${OZN_IG_SCRIPTS}/mk_summary.sh
-
-if [[ $DO_DATA_RPT -eq 1 ]]; then
-   ${OZN_IG_SCRIPTS}/mk_err_rpt.sh
-fi
-
-#--------------------------------------------------------------------
-#  Update the last_plot_time file if found
-#--------------------------------------------------------------------
-if [[ -e ${last_plot_time} ]]; then
-   echo "update last_plot_time file"
-   echo ${PDATE} > ${last_plot_time}
-fi
-
-
-#--------------------------------------------------------------------
-#  Remove all but the last 30 cycles worth of data image files.
-#--------------------------------------------------------------------
-${OZN_IG_SCRIPTS}/rm_img_files.pl --dir ${OZN_IMGN_TANKDIR} --nfl 30
 
 echo "end OznMon_Plt.sh"
 exit
