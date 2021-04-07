@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #--------------------------------------------------------------------
-#  OznMon_CP_glb.sh
+#  OznMon_CP.sh
 #
 #    This script searches for new oznmon output from the global GDAS
 #    and copies those filess to the user's $TANKDIR directory under 
@@ -28,12 +28,14 @@ function usage {
   echo "                       If not specified the pdate will be calculated by finding the latest"
   echo "                       cycle time in $OZN_STATS_TANKDIR and incrementing it by 6 hours."
   echo ""
-  echo "            -f|--oznf parent directory to file location.  This will be extended by "
+  echo "            --oznf parent directory to file location.  This will be extended by "
   echo "                       $RUN.$PDY/$CYC/atmos/oznmon and the files there copied to OZN_STATS_TANKDIR."
+  echo ""
+  echo "            --ostat directory of oznstat file."
 }
 
 
-echo start OznMon_CP_glb.sh
+echo start OznMon_CP.sh
 exit_value=0
 
 nargs=$#
@@ -42,8 +44,7 @@ if [[ $nargs -le 0 || $nargs -gt 7 ]]; then
    exit 1
 fi
 
-
-#export RAD_AREA=glb
+set -ax
 
 #-----------------------------------------------------------
 #  Set default values and process command line arguments.
@@ -64,8 +65,12 @@ do
          run="$2"
          shift # past argument
       ;;
-      -f|--oznf)
+      --oznf)
          oznmon_file_loc="$2"
+         shift # past argument
+      ;;
+      --ostat)
+         oznmon_stat_loc="$2"
          shift # past argument
       ;;
       *)
@@ -81,37 +86,39 @@ echo "OZNMON_SUFFIX    = $OZNMON_SUFFIX"
 echo "run              = $run"
 echo "pdate            = $pdate"
 echo "oznmon_file_loc  = ${oznmon_file_loc}"
+echo "oznmon_stat_loc  = ${oznmon_stat_loc}"
 
 export RUN=${RUN:-${run}}
 
-set -ax
 
 #--------------------------------------------------------------------
 # Set environment variables
 #--------------------------------------------------------------------
 this_dir=`dirname $0`
 
-
 top_parm=${this_dir}/../../parm
 
-export OZNMON_CONFIG=${OZNMON_CONFIG:-${top_parm}/OznMon_config}
-if [[ -s ${OZNMON_CONFIG} ]]; then
-   . ${OZNMON_CONFIG}
+oznmon_user_settings=${oznmon_user_settings:-${top_parm}/OznMon_user_settings}
+if [[ -s ${oznmon_user_settings} ]]; then
+   . ${oznmon_user_settings}
+   echo "able to source ${oznmon_user_settings}"
 else
-   echo "Unable to source ${OZNMON_CONFIG} (oznmon config) file"
-   exit 2
+   echo "Unable to source ${oznmon_user_settings} file"
+   exit 4
 fi
 
-if [[ -s ${OZNMON_USER_SETTINGS} ]]; then
-   . ${OZNMON_USER_SETTINGS}
+
+oznmon_config=${oznmon_config:-${top_parm}/OznMon_config}
+if [[ -s ${oznmon_config} ]]; then
+   . ${oznmon_config}
+   echo "able to source ${oznmon_config}"
 else
-   echo "Unable to source ${OZNMON_USER_SETTINGS} (oznmon user settings) file"
+   echo "Unable to source ${oznmon_config} file"
    exit 3
 fi
 
-
-if [[ ${oznmon_file_loc} = "" ]]; then
-   oznmon_file_loc=${OZNSTAT_LOCATION}
+if [[ ${oznmon_stat_loc} = "" ]]; then
+   oznmon_stat_loc=${OZNSTAT_LOCATION}
 fi
 
 
@@ -121,8 +128,8 @@ fi
 if [[ ! -d ${OZN_STATS_TANKDIR} ]]; then
    mkdir -p ${OZN_STATS_TANKDIR}
 fi
-if [[ ! -d ${LOGdir} ]]; then
-   mkdir -p ${LOGdir}
+if [[ ! -d ${OZN_LOGdir} ]]; then
+   mkdir -p ${OZN_LOGdir}
 fi
 
 #---------------------------------------------------------------
@@ -131,10 +138,9 @@ fi
 # $TANKverf and increment 6 hours.
 #---------------------------------------------------------------
 if [[ $pdate = "" ]]; then
-   ldate=`${OZN_DE_SCRIPTS}/nu_find_cycle.pl --run $RUN --cyc 1 --dir ${OZN_STATS_TANKDIR}`
+   ldate=`${OZN_DE_SCRIPTS}/find_cycle.pl --run $RUN --cyc 1 --dir ${OZN_STATS_TANKDIR}`
    pdate=`${NDATE} +06 ${ldate}`
 fi
-echo "pdate = $pdate"
 export PDATE=${pdate}
 
 export PDY=`echo $PDATE|cut -c1-8`
@@ -143,16 +149,32 @@ export CYC=`echo $PDATE|cut -c9-10`
 #---------------------------------------------------------------
 #  Verify the data files are available
 #---------------------------------------------------------------
+export OZNSTAT_LOCATION=${oznmon_stat_loc}/${RUN}.${PDY}/${CYC}/atmos
 
-export OZNSTAT_LOCATION=${oznmon_file_loc}/${RUN}.${PDY}/${CYC}/atmos
-echo "OZNSTAT_LOCATION = ${OZNSTAT_LOCATION}"
-export DATA_LOCATION=${OZNSTAT_LOCATION}/oznmon
+
+#---------------------------------------------------------------
+#  Location of the oznmon files is an adventure.  The if case
+#  is the default gfs output location.  Para runs are handled
+#  in the else condition
+#
+if [[ ${oznmon_file_loc} = "" ]]; then
+   data_location=${OZNSTAT_LOCATION}/oznmon
+else
+   data_location=${oznmon_file_loc}
+   if [[ -d ${data_location}/${RUN}.${PDY} ]]; then
+      data_location=${data_location}/${RUN}.${PDY}
+   fi
+fi
+
+export DATA_LOCATION=${data_location}
 echo "DATA_LOCATION = ${DATA_LOCATION}"
 
+export OZNSTAT=${OZNSTAT_LOCATION}/${RUN}.t${CYC}z.oznstat
+
 if [[  -d ${DATA_LOCATION} ]]; then
-   job=${DE_SCRIPTS}/oznmon_copy.sh
+   job=${OZN_DE_SCRIPTS}/oznmon_copy.sh
    jobname=OznMon_CP_${OZNMON_SUFFIX}
-   logfile=${LOGdir}/CP.${PDY}.${CYC}.log
+   logfile=${OZN_LOGdir}/CP.${PDY}.${CYC}.log
    if [[ -e ${logfile} ]]; then
      rm -f ${logfile}
    fi
@@ -176,6 +198,6 @@ else
 fi
 
 
-echo end OznMon_CP_glb.sh
+echo end OznMon_CP.sh
 exit ${exit_value}
 

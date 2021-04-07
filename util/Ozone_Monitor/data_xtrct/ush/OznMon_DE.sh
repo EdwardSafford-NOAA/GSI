@@ -10,7 +10,7 @@ function usage {
   echo "              if unspecified the last available date will be processed"
   echo "            -r | --run   the gdas|gfs run to be processed"
   echo "              use only if data in TANKdir stores both runs"
-  echo "            -s | --stat location of directory to oznstat files"
+  echo "            -s | --ostat location of directory to oznstat files"
   echo " "
 }
 

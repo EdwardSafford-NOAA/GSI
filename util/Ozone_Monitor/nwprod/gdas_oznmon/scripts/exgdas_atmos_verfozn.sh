@@ -34,8 +34,9 @@ export DO_DATA_RPT=${DO_DATA_RPT:-1}
 export NCP=${NCP:-/bin/cp}
 
 
-##################################################################
+#-----------------------------------------------------------------
 # ensure work and TANK dirs exist, verify oznstat is available
+#
 export OZN_WORK_DIR=${OZN_WORK_DIR:-$(pwd)}
 
 if [[ ! -d ${OZN_WORK_DIR} ]]; then
@@ -51,7 +52,7 @@ if [[ -s ${oznstat} ]]; then
    echo ${oznstat} is available
 fi
 
-#####################################################################
+
 
 data_available=0
 
@@ -84,7 +85,7 @@ if [[ -s ${oznstat} ]]; then
    err=$?
 
 else
-   # oznstat file is not available
+   # oznstat file not found
    err=1
 fi
 

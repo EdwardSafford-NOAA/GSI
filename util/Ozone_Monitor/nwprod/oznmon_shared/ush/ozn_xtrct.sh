@@ -2,7 +2,7 @@
 #------------------------------------------------------------------
 #  ozn_xtrct.sh
 #
-#  This script performs the data extraction from the cnvstat's
+#  This script performs the data extraction from the oznstat
 #  diagnostic files.  The resulting data (*.ieee_d) files, GrADS
 #  control files and stdout files will be moved to the 
 #  $TANKverf_ozn.  
@@ -93,7 +93,7 @@ echo "VALIDATE_DATA, validate = $VALIDATE_DATA, $validate "
 
 
 #------------------------------------------------------------------
-# ptype here is the processing type which is intended to be "ges" 
+# ozn_ptype here is the processing type which is intended to be "ges" 
 # or "anl".  Default is "ges".  
 #
 ozn_ptype=${ozn_ptype:-"ges anl"}

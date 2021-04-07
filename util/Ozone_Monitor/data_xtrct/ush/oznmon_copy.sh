@@ -45,11 +45,13 @@ echo "dest_dir = ${dest_dir}"
 satype_file=${OZN_STATS_TANKDIR}/info/${RUN}_oznmon_satype.txt
 
 if [[ ! -s ${satype_file} ]]; then
-   satype_file=${FIXgdas}/gdas_oznmon_satype.txt
+   satype_file=${FIXgdas_ozn}/gdas_oznmon_satype.txt
 fi
 
 if [[ ! -s ${satype_file} ]]; then
    echo "WARNING:  unable to locate ${satype_file}"
+else
+   satype_list=`cat ${satype_file}`
 fi
 
 
@@ -60,17 +62,23 @@ fi
 #  incomplete results which can result in false
 #  'drop out' plots.
 # 
-nfile_src=`ls -l ${DATA_LOCATION}/*${PDATE}*ieee_d* | egrep -c '^-'`
-echo "nfile_src = ${nfile_src}"
 
-nfile_thirty=`find ${DATA_LOCATION}/*${PDATE}*ieee_d* -maxdepth 0 -mmin -30`
-echo "nfile_thirty = ${nfile_thirty}"
+subdir_list="horiz time"
+for sub in ${subdir_list}; do
+   nfile_src=`ls -l ${DATA_LOCATION}/${sub}/*${PDATE}*ieee_d* | egrep -c '^-'`
+   echo "nfile_src = ${nfile_src}"
 
-if [[ ${nfile_src} -le 0 ]]; then
-   exit_value=5
-elif [[ ${nfile_thirty} != "" ]]; then
-   exit_value=4
-fi
+   nfile_thirty=`find ${DATA_LOCATION}/${sub}/*${PDATE}*ieee_d* -maxdepth 0 -mmin -30`
+   echo "nfile_thirty = ${nfile_thirty}"
+
+   if [[ ${nfile_src} -le 0 ]]; then
+      exit_value=5
+      exit 
+   elif [[ ${nfile_thirty} != "" ]]; then
+      exit_value=4
+      exit
+   fi
+done
 
 if [[ ${exit_value} -eq 0 ]]; then
    if [[ ! -d ${dest_dir} ]]; then
@@ -78,180 +86,76 @@ if [[ ${exit_value} -eq 0 ]]; then
    fi
    cd ${dest_dir}
 
-   type_list="horiz time"
 
-   for type in ${type_list}; do 
+   for sub in ${subdir_list}; do 
+     
+      mkdir -p ${dest_dir}/${sub} 
 
-      file_list=`ls ${DATA_LOCATION}/${type}.*${PDATE}*ieee_d* `
-
-      for file in ${file_list}; do
-         bfile=`basename ${file}`
-         echo "testing ${file}"
-
-         echo "target = ${dest_dir}/${bfile}"  
-         if [[ ! -e ${dest_dir}/${bfile} ]]; then
-            echo "copying file" 
-            ${NCP} ${file} ${dest_dir}/${bfile}
-         fi
-      done
+      $NCP ${DATA_LOCATION}/${sub}/*${PDATE}.ieee_d* ${dest_dir}/${sub}/.
+      $NCP ${DATA_LOCATION}/${sub}/*.ctl* ${dest_dir}/${sub}/.
+      if [[ ${sub} = "time" ]]; then
+         $NCP ${DATA_LOCATION}/${sub}/bad*${PDATE}* ${dest_dir}/${sub}/.
+      fi
    done
 
-   $NCP ${DATA_LOCATION}/*.ctl* ${dest_dir}/.
 
+   if [[ $DO_DATA_RPT -eq 1 && ${#satype_list} -gt 0 ]]; then
 
-   if [[ $DO_DATA_RPT -eq 1 ]]; then
-
-
-      #-------------------------------------------------
-      #  run validate.sh
+      #-------------------------------------------------------------------
+      # re-run the bad_diag report 
+      #    1.  Rm any existing bad_diag file.      
+      #    2.  Get the contents of the SATYPE list in this order:
+      #           $OZN_TANKdir/$SUFFIX/info/gdas_oznmon_satype.txt
+      #           $GDAS_OZNMON/fix/gdas/oznmon_satype.txt
+      #    3.  Get contents of oznstat file & strip to sat/instr.
+      #    4.  Compare satype list to oznstat contents; report missing.
       #
-#      $NCP ${DE_EXEC}/radmon_validate_tm.x ${dest_dir}/.
-#      $NCP $DE_SCRIPTS/validate.sh    ${dest_dir}/.
-#      echo "firing validate.sh"
-#
-#      ./validate.sh ${PDATE}
-#
-#      valid_tar=stdout.validate.tar
-#
-#      if [[ $CYC -eq "00" ]]; then
-#         tar -cvf ${valid_tar} stdout.validate.*.00 
-#      else
-#         tar -rvf ${valid_tar} stdout.validate.*.${CYC}
-#      fi
-#
-#      rm -f stdout.validate.*.${CYC}
-#  
-#      ls -la ./${valid_tar} 
-#   fi
-#
-#
-#   if [[ ${CLEAN_TANKVERF} -eq 1 ]]; then
-#      days_to_keep=40
-#      ${HOMEradmon}/ush/clean_tankdir.sh ${RAD_AREA} ${days_to_keep}
-#   fi
-#
-#fi
-#
-#warn_msg="warning.${PDATE}"
-#warn_msg2="warning2.${PDATE}"
-#
-#echo "exit_value now = ${exit_value}"
-#if [[ $exit_value == 0 ]]; then
-#
-#   #--------------------------------------------------------------------
-#   #  Tar up the stdout.validation files 
-#   #--------------------------------------------------------------------
-#   if [[ $DO_DATA_RPT -eq 1 ]]; then
-#      echo "begin DO_DATA_RPT"
-#
-#      #--------------------------------------------------------------------
-#      #  Remove extra spaces in new bad_pen and low_count files
-#      #--------------------------------------------------------------------
-#      bad_pen=bad_pen.${PDATE}
-#      gawk '{$1=$1}1' $bad_pen > tmp.bad_pen
-#      mv -f tmp.bad_pen $bad_pen
-#
-#      low_count=low_count.${PDATE}
-#      gawk '{$1=$1}1' $low_count > tmp.low_count
-#      mv -f tmp.low_count $low_count
-#         
-# 
-#      #--------------------------------------------------------------------
-#      #  Diag report processing
-#      #
-#      #  New algorithm:
-#      #
-#      #     1.  locate satype and radstat files, specify output file
-#      #     2.  run new radmon_diag_ck.sh script
-#      #     3.  build diag report from output file
-#      #     4.  move output file to target tankdir
-#      #--------------------------------------------------------------------
-#      radstat=${radstat:-${RADSTAT_LOCATION}/${RUN}.t${CYC}z.radstat}
-#      diag_out="bad_diag.${PDATE}"
-#
-#      if [[ ! -e ${satype_file} ]]; then
-#         echo "MISSING satype_file: ${satype_file}"
-#      else
-#         echo "satype_file is good to go:  ${satype_file}"
-#      fi
-#
-#      if [[ ! -e ${radstat_file} ]]; then
-#         echo "MISSING radstat_file: ${radstat_file}"
-#      else
-#         echo "radstat is good to go: ${radstat}"
-#      fi
-#
-#
-#      if [[ -e ${satype_file} && -e ${radstat} ]]; then
-#         echo "satype  = $satype_file"
-#         echo "radstat = $radstat"
-#
-#	 ${DE_SCRIPTS}/radmon_diag_ck.sh --rad ${radstat} --sat ${satype_file} --out ${diag_out}
-#         if [[ -e ${diag_out} ]]; then
-#            $NCP ./${diag_out} ${TANKverf}/${RUN}.${day}/${cyc}/radmon/.
-#         fi
-#      fi
-#
-#
-#      #--------------------------------------------------------------------
-#      #  Create a new penalty error report using the new bad_pen file
-#      #--------------------------------------------------------------------
-#      $NCP $DE_SCRIPTS/radmon_err_rpt.sh      ${dest_dir}/.
-#
-#      prev_bad_pen=${TANKverf}/${RUN}.${prev_day}/${prev_cyc}/${monitor}/bad_pen.${prev}
-#      prev_low_count=${TANKverf}/${RUN}.${prev_day}/${prev_cyc}/${monitor}/low_count.${prev}
-#
-#      bad_pen=bad_pen.${PDATE}
-#      diag_rpt="diag.txt"
-#      bad_pen_rpt="pen.${PDATE}.txt"
-#      err_rpt="err.${PDATE}.txt"
-#      low_obs_rpt="obs.${PDATE}.txt"
-#
-#      ./radmon_err_rpt.sh $prev_bad_pen $bad_pen pen ${prev} ${PDATE} $diag_out $bad_pen_rpt
-#
-#      ./radmon_err_rpt.sh $prev_low_count $low_count cnt ${prev} ${PDATE} $diag_out $low_obs_rpt
-#
-#
-#
-#      #--------------------------
-#      #  Build the $warn_msg file
-#      #
-#      if [[ -s $bad_pen_rpt || -s $low_obs_rpt || -s ${diag_out} ]]; then
-#
-#         if [[ -s $bad_pen_rpt ]]; then
-#            args="${args} --pen ${bad_pen_rpt}"
-#         fi
-#
-#         if [[ -s $low_obs_rpt ]]; then
-#            args="${args} --obs ${low_obs_rpt}"
-#         fi
-#
-#         if [[ -s $diag_out ]]; then
-#            args="${args} --diag ${diag_out}"
-#         fi
-#
-#         ${DE_SCRIPTS}/radmon_mk_warning.sh ${args} --out ${warn_msg}
-#
-#      fi
-#
-#      $COMPRESS *.ctl
-#
-#   fi
-#
-#   #--------------------------------------------------------------------
-#   # Remove processing scripts/executables and exit.
-#   #--------------------------------------------------------------------
-#   rm -f radmon_validate_tm.x
-#   rm -f validate.sh 
-#   rm -f radmon_err_rpt.sh  
-#
-#   nfile_dest=`ls -l ${dest_dir}/*${PDATE}*ieee_d* | egrep -c '^-'`
-#
-#   if [[ exit_value -eq 0 && $nfile_src -ne $nfile_dest ]]; then
-#      exit_value=6 
-#   fi
-#
-#fi
+      bad_diag=${dest_dir}/time/bad_diag.${PDATE}
+      if [[ -e ${bad_diag} ]]; then
+         rm ${bad_diag}
+      fi
+
+      oznstat_files=`tar -tf ${OZNSTAT}`
+      #-------------------------------------------------------------------------
+      # Diag files are in this format: 
+      #     diag_gome_metop-a_ges.2021040506.nc4.gz
+      #     diag_gome_metop-a_anl.2021040506.nc4.gz
+      #
+      # Select only the 'ges' files and reduce them to:
+      #     gome_metop-a
+      #
+      for file in ${oznstat_files}; do
+         if [[ "${file}" == *"ges"* ]]; then
+            sat=`echo ${file} | cut -d. -f1`
+            sat="$( cut -d '_' -f2- <<< "${sat}" )";
+            sat=`echo ${sat} | rev | cut -d"_" -f2-  | rev`
+
+            oznstat_list="${oznstat_list} ${sat}" 
+         fi
+      done     
+
+      diag_rpt="diag_rpt.txt"
+      echo '' > ${diag_rpt}
+
+      for sat in ${satype_list}; do
+         test=`echo ${oznstat_list} | grep ${sat}`
+         echo "test length = ${#test}"
+
+         if [[  "${#test}" -eq 0 ]]; then
+            echo " missing diag file -- diag_${sat}.${PDATE} not found" >> ${diag_rpt}
+         fi
+      done
+
+      diag_test=`cat ${diag_rpt}`
+      echo "diag_test = ${#diag_test}"
+      if [[ ${#diag_test} -gt 0 ]]; then
+         mv ${diag_rpt} ${bad_diag}
+      fi     
+
+   fi	  # DO_DATA_REPORT
+
+
+fi   # exit value != 0
 
 echo ""
 echo "<-- oznmon_copy.sh"
