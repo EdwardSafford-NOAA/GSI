@@ -147,10 +147,13 @@ if [[ ${exit_value} -eq 0 ]]; then
       done
 
       diag_test=`cat ${diag_rpt}`
-      echo "diag_test = ${#diag_test}"
       if [[ ${#diag_test} -gt 0 ]]; then
          mv ${diag_rpt} ${bad_diag}
       fi     
+
+      if [[ -e ${diag_rpt} ]]; then
+         rm ${diag_rpt}
+      fi
 
    fi	  # DO_DATA_REPORT
 

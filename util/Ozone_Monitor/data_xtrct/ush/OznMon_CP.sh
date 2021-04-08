@@ -168,10 +168,12 @@ fi
 
 export DATA_LOCATION=${data_location}
 echo "DATA_LOCATION = ${DATA_LOCATION}"
+nfile_src=`ls -l ${DATA_LOCATION}/time/*${PDATE}*ieee_d* | egrep -c '^-'`
 
 export OZNSTAT=${OZNSTAT_LOCATION}/${RUN}.t${CYC}z.oznstat
 
-if [[  -d ${DATA_LOCATION} ]]; then
+
+if [[  ${nfile_src} -gt 0 ]]; then
    job=${OZN_DE_SCRIPTS}/oznmon_copy.sh
    jobname=OznMon_CP_${OZNMON_SUFFIX}
    logfile=${OZN_LOGdir}/CP.${PDY}.${CYC}.log
