@@ -124,6 +124,10 @@ echo "last_plot_time file = ${last_plot_time}"
 
 latest_data=`${IG_SCRIPTS}/nu_find_cycle.pl --cyc 1 \
                            --dir ${TANKDIR} --run ${RUN}`
+if [[ ${latest_data} = "" ]]; then
+   latest_data=`${IG_SCRIPTS}/find_cycle.pl --cyc 1 \
+                           --dir ${TANKDIR} --run ${RUN}`
+fi
 
 if [[ ${pdate} = "" ]]; then
    if [[ -e ${last_plot_time} ]]; then
@@ -175,8 +179,13 @@ export PDY=`echo $PDATE|cut -c1-8`
 #
 
 ieee_src=${TANKverf}/${RUN}.${PDY}/${CYC}/${MONITOR}
+
 if [[ ! -d ${ieee_src} ]]; then
    ieee_src=${TANKverf}/${RUN}.${PDY}/${MONITOR}
+
+   if [[ ! -d ${ieee_src} ]]; then
+      ieee_src=${TANKverf}/${RUN}.${PDY}
+   fi
 fi
 
 if [[ ! -d ${ieee_src} ]]; then
@@ -281,7 +290,7 @@ fi
 #--------------------------------------------------------------------
 #  Remove all but the last 30 cycles worth of data image files.
 #--------------------------------------------------------------------
-${IG_SCRIPTS}/rm_img_files.pl --dir ${TANKimg}/radmon/pngs --nfl 30
+#${IG_SCRIPTS}/rm_img_files.pl --dir ${TANKimg}/radmon/pngs --nfl 30
 
 
 
