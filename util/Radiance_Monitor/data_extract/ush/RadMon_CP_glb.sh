@@ -28,8 +28,12 @@ function usage {
   echo "                       If not specified the pdate will be calculated by finding the latest"
   echo "                       cycle time in $TANKverf and incrementing it by 6 hours."
   echo ""
-  echo "            -f|--radf parent directory to file location.  This will be extended by "
+  echo "            -f|--radf parent directory to radstat file location.  This will be extended by "
   echo "                       $RUN.$PDY/$CYC/atmos/radmon and the files there copied to TANKverf."
+  echo ""
+  echo "            -d|--dataf parent directory to extracted radstat data file location.  This will be extended by "
+  echo "                       $RUN.$PDY/$CYC and the files there copied to TANKverf."
+
 }
 
 
@@ -37,7 +41,7 @@ echo start RadMon_CP_glb.sh
 exit_value=0
 
 nargs=$#
-if [[ $nargs -le 0 || $nargs -gt 7 ]]; then
+if [[ $nargs -le 0 || $nargs -gt 9 ]]; then
    usage
    exit 1
 fi
@@ -68,6 +72,10 @@ do
          radmon_file_loc="$2"
          shift # past argument
       ;;
+      -d|--dataf)
+         data_file_loc="$2"
+         shift # past argument
+      ;;
       *)
          #any unspecified key is RADMON_SUFFIX
          export RADMON_SUFFIX=$key
@@ -81,6 +89,7 @@ echo "RADMON_SUFFIX    = $RADMON_SUFFIX"
 echo "run              = $run"
 echo "pdate            = $pdate"
 echo "radmon_file_loc  = ${radmon_file_loc}"
+echo "data_file_loc    = ${data_file_loc}"
 
 export RUN=${RUN:-${run}}
 
@@ -112,6 +121,7 @@ fi
 export USHradmon=${USHradmon:-$HOMEradmon/ush}
 
 if [[ ${radmon_file_loc} = "" ]]; then
+   echo "setting default radmon_file_loc"
    radmon_file_loc=${RADSTAT_LOCATION}
 fi
 
@@ -142,13 +152,15 @@ export PDY=`echo $PDATE|cut -c1-8`
 export CYC=`echo $PDATE|cut -c9-10`
 
 #---------------------------------------------------------------
-#  Verify the data files are available
+#  Set data and radstat locations     
 #---------------------------------------------------------------
-
-export RADSTAT_LOCATION=${radmon_file_loc}/${RUN}.${PDY}/${CYC}/atmos
-echo "RADSTAT_LOCATION = ${RADSTAT_LOCATION}"
-export DATA_LOCATION=${RADSTAT_LOCATION}/radmon
-echo "DATA_LOCATION = ${DATA_LOCATION}"
+if [[ -n ${radmon_file_loc} && -n ${data_file_loc} ]]; then
+   export DATA_LOCATION=${data_file_loc}/${RUN}.${PDY}
+   export RADSTAT_LOCATION=${radmon_file_loc}/${RUN}.${PDY}/${CYC}/atmos
+else  
+   export DATA_LOCATION=${RADSTAT_LOCATION}/radmon
+   export RADSTAT_LOCATION=${radmon_file_loc}/${RUN}.${PDY}/${CYC}/atmos
+fi
 
 if [[  -d ${DATA_LOCATION} ]]; then
    job=${DE_SCRIPTS}/radmon_copy.sh
