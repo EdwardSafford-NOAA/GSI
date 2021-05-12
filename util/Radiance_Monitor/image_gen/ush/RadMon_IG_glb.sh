@@ -155,7 +155,7 @@ echo "PDATE = ${PDATE}"
 #  Make sure $LOGdir exists
 #--------------------------------------------------------------------
 echo "LOGdir = ${LOGdir}"
-if [[ -e ${LOGdir} ]]; then
+if [[ ! -e ${LOGdir} ]]; then
    mkdir -p $LOGdir
 fi
 
