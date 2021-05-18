@@ -69,7 +69,7 @@ do
          shift # past argument
       ;;
       -f|--radf)
-         radmon_file_loc="$2"
+         radstat_loc="$2"
          shift # past argument
       ;;
       -d|--dataf)
@@ -88,7 +88,7 @@ done
 echo "RADMON_SUFFIX    = $RADMON_SUFFIX"
 echo "run              = $run"
 echo "pdate            = $pdate"
-echo "radmon_file_loc  = ${radmon_file_loc}"
+echo "radstat_loc      = ${radstat_loc}"
 echo "data_file_loc    = ${data_file_loc}"
 
 export RUN=${RUN:-${run}}
@@ -120,11 +120,6 @@ fi
 
 export USHradmon=${USHradmon:-$HOMEradmon/ush}
 
-if [[ ${radmon_file_loc} = "" ]]; then
-   echo "setting default radmon_file_loc"
-   radmon_file_loc=${RADSTAT_LOCATION}
-fi
-
 
 #---------------------------------------------------------------
 # Create any missing directories.
@@ -154,13 +149,18 @@ export CYC=`echo $PDATE|cut -c9-10`
 #---------------------------------------------------------------
 #  Set data and radstat locations     
 #---------------------------------------------------------------
-if [[ -n ${radmon_file_loc} && -n ${data_file_loc} ]]; then
+if [[ -n ${radstat_loc} ]]; then 
+   export RADSTAT_LOCATION=${radstat_loc}
+fi
+export RADSTAT_LOCATION=${RADSTAT_LOCATION}/${RUN}.${PDY}/${CYC}/atmos
+
+
+if [[ -n ${data_file_loc} ]]; then
    export DATA_LOCATION=${data_file_loc}/${RUN}.${PDY}
-   export RADSTAT_LOCATION=${radmon_file_loc}/${RUN}.${PDY}/${CYC}/atmos
 else  
    export DATA_LOCATION=${RADSTAT_LOCATION}/radmon
-   export RADSTAT_LOCATION=${radmon_file_loc}/${RUN}.${PDY}/${CYC}/atmos
 fi
+
 
 if [[  -d ${DATA_LOCATION} ]]; then
    job=${DE_SCRIPTS}/radmon_copy.sh
