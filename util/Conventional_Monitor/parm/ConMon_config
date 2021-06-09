@@ -23,7 +23,14 @@ if [[ $CONMON_CONFIG -ne 1 ]]; then
    export DO_DATA_RPT=${DO_DATA_RPT:-1}
 
    export MAIL_TO=${MAIL_TO:-"edward.safford@noaa.gov"}
-   export MAIL_CC=${MAIL_CC:=""}
+
+   if [[ -e /u/${LOGNAME}/bin/get_cc_list.pl ]]; then
+      cc_list=`/u/${LOGNAME}/bin/get_cc_list.pl --nr ${CONMON_SUFFIX}_${RUN} --mon ConMon`
+   else
+      cc_list=""
+   fi
+   export MAIL_CC=${MAIL_CC:=${cc_list}}
+
 
    #-----------------------------------------------------
    #   The grib2 flag indicates if the data files are in
