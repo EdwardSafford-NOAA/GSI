@@ -134,25 +134,28 @@ if [[ ${exit_value} -eq 0 ]]; then
          fi
       done     
 
-      diag_rpt="diag_rpt.txt"
-      echo '' > ${diag_rpt}
+      if [[ ${#oznstat_list} -gt 0 ]]; then
 
-      for sat in ${satype_list}; do
-         test=`echo ${oznstat_list} | grep ${sat}`
-         echo "test length = ${#test}"
+         diag_rpt="diag_rpt.txt"
+         echo '' > ${diag_rpt}
 
-         if [[  "${#test}" -eq 0 ]]; then
-            echo " missing diag file -- diag_${sat}.${PDATE} not found" >> ${diag_rpt}
+         for sat in ${satype_list}; do
+            test=`echo ${oznstat_list} | grep ${sat}`
+            echo "test length = ${#test}"
+
+            if [[  "${#test}" -eq 0 ]]; then
+               echo " missing diag file -- diag_${sat}.${PDATE} not found" >> ${diag_rpt}
+            fi
+         done
+
+         diag_test=`cat ${diag_rpt}`
+         if [[ ${#diag_test} -gt 0 ]]; then
+            mv ${diag_rpt} ${bad_diag}
+         fi     
+
+         if [[ -e ${diag_rpt} ]]; then
+            rm ${diag_rpt}
          fi
-      done
-
-      diag_test=`cat ${diag_rpt}`
-      if [[ ${#diag_test} -gt 0 ]]; then
-         mv ${diag_rpt} ${bad_diag}
-      fi     
-
-      if [[ -e ${diag_rpt} ]]; then
-         rm ${diag_rpt}
       fi
 
    fi	  # DO_DATA_REPORT
