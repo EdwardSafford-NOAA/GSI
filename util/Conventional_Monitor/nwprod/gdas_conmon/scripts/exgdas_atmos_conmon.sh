@@ -65,7 +65,10 @@
    #
    pgrbf00=${pgrbf00:-${C_COMIN}/${CYC}/${component}/gdas.t${CYC}z.pgrb2.0p25.f000}
    if [[ ! -e ${pgrbf00} ]]; then
-      pgrbf00=${C_COMIN}/gdas.t${CYC}z.pgrb2b.1p00.anl}
+      pgrbf00=${C_COMIN}/${CYC}/${component}/gdas.t${CYC}z.pgrb2.1p00.anl
+   fi
+   if [[ ! -e ${pgrbf00} ]]; then
+      pgrbf00=${C_COMIN}/gdas.t${CYC}z.pgrb2.1p00.anl
    fi
    export pgrbf00=${pgrbf00}
 
@@ -74,7 +77,10 @@
    #
    pgrbf06=${pgrbf06:-${C_COMINm6h}/${GCYC}/${component}/gdas.t${GCYC}z.pgrb2.0p25.f006}  
    if [[ ! -e ${pgrbf06} ]]; then
-      pgrbf06=${C_COMINm6h}/gdas.t${GCYC}z.pgrb2b.1p00.anl}
+      pgrbf06=${C_COMINm6h}/${GCYC}/${component}/gdas.t${GCYC}z.pgrb2.1p00.anl
+   fi
+   if [[ ! -e ${pgrbf06} ]]; then
+      pgrbf06=${C_COMINm6h}/gdas.t${GCYC}z.pgrb2.1p00.anl
    fi
    export pgrbf06=${pgrbf06}
 
@@ -219,9 +225,9 @@
       #---------------------------------------
       #  run the horz-hist extraction script
       #
-      ${USHconmon}/horz_hist.sh
-      rc_horz_hist=$?
-      echo "rc_horz_hist = $rc_horz_hist"
+#      ${USHconmon}/horz_hist.sh
+#      rc_horz_hist=$?
+#      echo "rc_horz_hist = $rc_horz_hist"
 
       #---------------------------------------
       #  run the time-vert extraction script
@@ -233,11 +239,11 @@
       #--------------------------------------
       #  optionally run clean_tankdir script
       #   
-      if [[ ${CLEAN_TANKDIR} -eq 1 ]]; then
-         ${USHconmon}/clean_tankdir.sh
-         rc_clean_tankdir=$?
-         echo "rc_clean_tankdir = $rc_clean_tankdir"
-      fi
+#      if [[ ${CLEAN_TANKDIR} -eq 1 ]]; then
+#         ${USHconmon}/clean_tankdir.sh
+#         rc_clean_tankdir=$?
+#         echo "rc_clean_tankdir = $rc_clean_tankdir"
+#      fi
    fi
 
    #####################################################################

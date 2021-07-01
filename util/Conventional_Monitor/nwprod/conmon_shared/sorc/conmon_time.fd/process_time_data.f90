@@ -82,21 +82,21 @@ module conmon_process_time_data
    !------------------------------------------------------------
    !
    subroutine process_conv_diag(input_file,ctype,mregion,nregion,np, &
-           ptop,pbot,ptopq,pbotq, &
+           ptop,pbot,ptopq,pbotq, htop_gps, hbot_gps, &
            rlatmin,rlatmax,rlonmin,rlonmax,iotype_ps,iotype_q,&
-           iotype_t,iotype_uv,varqc_ps,varqc_q,varqc_t,varqc_uv,&
-           ntype_ps,ntype_q,ntype_t,ntype_uv,&
-           iosubtype_ps,iosubtype_q,iosubtype_t,iosubtype_uv)
+           iotype_t,iotype_uv,iotype_gps,varqc_ps,varqc_q,varqc_t,varqc_uv,varqc_gps,&
+           ntype_ps,ntype_q,ntype_t,ntype_uv,ntype_gps,&
+           iosubtype_ps,iosubtype_q,iosubtype_t,iosubtype_uv,iosubtype_gps)
 
       character(100)           :: input_file
       character(3)             :: ctype         ! only used with NetCDF formatted diag files
       integer                     mregion,nregion,np
-      real(4),dimension(np)    :: ptop,pbot,ptopq,pbotq
+      real(4),dimension(np)    :: ptop,pbot,ptopq,pbotq,htop_gps,hbot_gps
       real,dimension(mregion)  :: rlatmin,rlatmax,rlonmin,rlonmax
-      integer,dimension(100)   :: iotype_ps,iotype_q,iotype_t,iotype_uv
-      real(4),dimension(100,2) :: varqc_ps,varqc_q,varqc_t,varqc_uv
-      integer                     ntype_ps,ntype_q,ntype_t,ntype_uv
-      integer,dimension(100)   :: iosubtype_ps,iosubtype_q,iosubtype_t,iosubtype_uv
+      integer,dimension(100)   :: iotype_ps,iotype_q,iotype_t,iotype_uv,iotype_gps
+      real(4),dimension(100,2) :: varqc_ps,varqc_q,varqc_t,varqc_uv,varqc_gps
+      integer                     ntype_ps,ntype_q,ntype_t,ntype_uv,ntype_gps
+      integer,dimension(100)   :: iosubtype_ps,iosubtype_q,iosubtype_t,iosubtype_uv, iosubtype_gps
 
       real(4),dimension(np,100,6,nregion,3)  :: twork,qwork,uwork,vwork,uvwork
       real(4),dimension(1,100,6,nregion,3)   :: pswork
@@ -106,10 +106,11 @@ module conmon_process_time_data
       if( netcdf ) then
          write(6,*) ' call nc read subroutine'
          call process_conv_nc( input_file, ctype, mregion,nregion,np,ptop,pbot,ptopq,pbotq,&
+                               htop_gps, hbot_gps,&
                  rlatmin,rlatmax,rlonmin,rlonmax,iotype_ps,iotype_q,&
-                 iotype_t,iotype_uv,varqc_ps,varqc_q,varqc_t,varqc_uv,&
-                 ntype_ps,ntype_q,ntype_t,ntype_uv,&
-                 iosubtype_ps,iosubtype_q,iosubtype_t,iosubtype_uv, &
+                 iotype_t,iotype_uv,iotype_gps,varqc_ps,varqc_q,varqc_t,varqc_uv,varqc_gps,&
+                 ntype_ps,ntype_q,ntype_t,ntype_uv,ntype_gps,&
+                 iosubtype_ps,iosubtype_q,iosubtype_t,iosubtype_uv,iosubtype_gps,&
                  twork,uwork,vwork,uvwork )
       else
          write(6,*) ' call bin read subroutine'
@@ -250,10 +251,10 @@ module conmon_process_time_data
    !  tar file contains 4 ges and 4 anl diag files.
    !-----------------------------------------------------------
    subroutine process_conv_nc( input_file, ctype, mregion, nregion, np, &
-           ptop, pbot, ptopq, pbotq, rlatmin, rlatmax, rlonmin, rlonmax, &
-           iotype_ps, iotype_q, iotype_t, iotype_uv, varqc_ps, varqc_q, &
-           varqc_t, varqc_uv, ntype_ps, ntype_q, ntype_t, ntype_uv, &
-           iosubtype_ps, iosubtype_q, iosubtype_t, iosubtype_uv, &
+           ptop, pbot, ptopq, pbotq, htop_gps, hbot_gps, rlatmin, rlatmax, rlonmin, rlonmax, &
+           iotype_ps, iotype_q, iotype_t, iotype_uv, iotype_gps, varqc_ps, varqc_q, &
+           varqc_t, varqc_uv, varqc_gps, ntype_ps, ntype_q, ntype_t, ntype_uv, ntype_gps,&
+           iosubtype_ps, iosubtype_q, iosubtype_t, iosubtype_uv, iosubtype_gps,&
            twork, uwork, vwork, uvwork )
 
       use generic_list
@@ -267,12 +268,12 @@ module conmon_process_time_data
       integer, intent(in)                    :: mregion
       integer, intent(in)                    :: nregion
       integer, intent(in)                    :: np
-      real(4),dimension(np),intent(in)       :: ptop,pbot,ptopq,pbotq
+      real(4),dimension(np),intent(in)       :: ptop,pbot,ptopq,pbotq,htop_gps,hbot_gps
       real,dimension(mregion),intent(in)     :: rlatmin,rlatmax,rlonmin,rlonmax
-      integer,dimension(100),intent(in)      :: iotype_ps,iotype_q,iotype_t,iotype_uv
-      real(4),dimension(100,2),intent(in)    :: varqc_ps,varqc_q,varqc_t,varqc_uv
-      integer, intent(in)                    :: ntype_ps,ntype_q,ntype_t
-      integer,dimension(100),intent(in)      :: iosubtype_ps,iosubtype_q,iosubtype_uv,iosubtype_t
+      integer,dimension(100),intent(in)      :: iotype_ps,iotype_q,iotype_t,iotype_uv,iotype_gps
+      real(4),dimension(100,2),intent(in)    :: varqc_ps,varqc_q,varqc_t,varqc_uv,varqc_gps
+      integer, intent(in)                    :: ntype_ps,ntype_q,ntype_t,ntype_gps
+      integer,dimension(100),intent(in)      :: iosubtype_ps,iosubtype_q,iosubtype_uv,iosubtype_t,iosubtype_gps
 
       !========================================================================
       !  NOTE:  I think the *work arrays don't need to be params -- they are
@@ -280,7 +281,7 @@ module conmon_process_time_data
       !========================================================================
       !
       real(4),dimension(np,100,6,nregion,3), intent(out)  :: twork,uwork,vwork,uvwork
-      real(4),dimension(np,100,6,nregion,3)  :: qwork
+      real(4),dimension(np,100,6,nregion,3)  :: qwork, gpswork
       real(4),dimension(1,100,6,nregion,3)   :: pswork
 
 
@@ -308,7 +309,7 @@ module conmon_process_time_data
       print *, '      input_file = ', input_file
       print *, '      ctype      = ', ctype     
 
-      twork=0.0; qwork=0.0; uwork=0.0; vwork=0.0; uvwork=0.0; pswork=0.0
+      twork=0.0; qwork=0.0; uwork=0.0; vwork=0.0; uvwork=0.0; pswork=0.0; gpswork=0.0
 
       call conmon_return_all_obs( input_file, ctype, nobs, list )
       print *, 'nobs read = ', nobs
@@ -419,6 +420,30 @@ module conmon_process_time_data
                          rlatmin, rlatmax, rlonmin, rlonmax, iosubtype_uv)
 
             call output_data_uv( uvwork, uwork, vwork, ntype_uv, nregion, np )
+
+         case ( 'gps' )
+            print *, ' select, case gps'
+            obs_ctr = 0
+            do while ( associated( next ) == .TRUE. )
+               obs_ctr = obs_ctr + 1
+               ptr = transfer(list_get( next ), ptr)
+               next => list_next( next )
+
+               do jj = 1, max_rdiag_reals
+                  rdiag(jj, obs_ctr) = ptr%p%rdiag( jj )
+               end do
+
+            end do
+
+            print *, 'found nobs in list = ', obs_ctr
+            call list_free( list )
+      
+            print *, 'iotype_gps = ', iotype_gps 
+            call stascal_gps(ctype, rdiag, max_rdiag_reals, nobs, iotype_gps, varqc_gps, ntype_gps, &
+                         gpswork, np, htop_gps, hbot_gps, nregion, mregion, &
+                         rlatmin, rlatmax, rlonmin, rlonmax, iosubtype_gps)
+
+            call output_data_gps( gpswork, ntype_gps, nregion, np )
 
       end select
 
@@ -624,7 +649,7 @@ module conmon_process_time_data
 
       close( outfile )
 
-      write(6,*) '--> output_data_q'
+      write(6,*) '<-- output_data_q'
 
    end subroutine output_data_q
 
@@ -825,6 +850,79 @@ module conmon_process_time_data
 
    end subroutine output_data_uv
 
+
+   subroutine output_data_gps( gpswork, ntype_gps, nregion, np )
+
+      real(4),dimension(np,100,6,nregion,3), intent(inout)  :: gpswork
+      integer, intent(in)                                   :: ntype_gps, nregion, np
+
+      integer                                               :: ii, jj, kk, ltype, iregion
+      integer, parameter                                    :: outfile = 61
+
+                                    
+      write(6,*) '--> output_data_gps'
+
+      do iregion=1,nregion
+         do jj=1,3
+            do kk=1,np
+               do ltype=1,ntype_gps
+                  gpswork(kk,ntype_gps+1,1,iregion,jj) = &
+                           gpswork(kk,ntype_gps+1,1,iregion,jj)+gpswork(kk,ltype,1,iregion,jj)
+                  gpswork(kk,ntype_gps+1,2,iregion,jj) = &
+                           gpswork(kk,ntype_gps+1,2,iregion,jj)+gpswork(kk,ltype,2,iregion,jj)
+                  gpswork(kk,ntype_gps+1,3,iregion,jj) = &
+                           gpswork(kk,ntype_gps+1,3,iregion,jj)+gpswork(kk,ltype,3,iregion,jj)
+                  gpswork(kk,ntype_gps+1,4,iregion,jj) = &
+                           gpswork(kk,ntype_gps+1,4,iregion,jj)+gpswork(kk,ltype,4,iregion,jj)
+                  gpswork(kk,ntype_gps+1,5,iregion,jj) = &
+                           gpswork(kk,ntype_gps+1,5,iregion,jj)+gpswork(kk,ltype,5,iregion,jj)
+                  gpswork(kk,ntype_gps+1,6,iregion,jj) = &
+                           gpswork(kk,ntype_gps+1,6,iregion,jj)+gpswork(kk,ltype,6,iregion,jj)
+
+                  if(gpswork(kk,ltype,1,iregion,jj) >=1.0) then
+                     gpswork(kk,ltype,3,iregion,jj) = &
+                           gpswork(kk,ltype,3,iregion,jj)/gpswork(kk,ltype,1,iregion,jj)
+                     gpswork(kk,ltype,4,iregion,jj) = &
+                           sqrt(gpswork(kk,ltype,4,iregion,jj)/gpswork(kk,ltype,1,iregion,jj))
+                     gpswork(kk,ltype,5,iregion,jj) = &
+                           gpswork(kk,ltype,5,iregion,jj)/gpswork(kk,ltype,1,iregion,jj)
+                     gpswork(kk,ltype,6,iregion,jj) = &
+                           gpswork(kk,ltype,6,iregion,jj)/gpswork(kk,ltype,1,iregion,jj)
+                  endif
+               enddo
+
+               if(gpswork(kk,ntype_gps+1,1,iregion,jj) >=1.0) then
+                  gpswork(kk,ntype_gps+1,3,iregion,jj)=gpswork(kk,ntype_gps+1,3,iregion,jj)/&
+                                    gpswork(kk,ntype_gps+1,1,iregion,jj)
+                  gpswork(kk,ntype_gps+1,4,iregion,jj)=sqrt(gpswork(kk,ntype_gps+1,4,iregion,jj)/&
+                                    gpswork(kk,ntype_gps+1,1,iregion,jj))
+                  gpswork(kk,ntype_gps+1,5,iregion,jj)=gpswork(kk,ntype_gps+1,5,iregion,jj)/&
+                                    gpswork(kk,ntype_gps+1,1,iregion,jj)
+                  gpswork(kk,ntype_gps+1,6,iregion,jj)=gpswork(kk,ntype_gps+1,6,iregion,jj)/&
+                                    gpswork(kk,ntype_gps+1,1,iregion,jj)
+               endif
+            enddo
+         enddo
+      enddo
+
+      !--------------------
+      !  write stas file
+      !
+      open( outfile, file='gps_stas', form='unformatted' )
+
+      do jj=1,3
+         do ii=1,6
+            do kk=1,np
+               write( outfile ) (( gpswork( kk,ltype,ii,iregion,jj ), ltype=1, ntype_gps+1 ), iregion=1, nregion )
+            enddo
+         enddo
+      enddo
+
+      close( outfile )
+
+      write(6,*) '<-- output_data_gps'
+
+   end subroutine output_data_gps
 
 
    !-------------------------------------

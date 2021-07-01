@@ -106,7 +106,8 @@ EOF
 
       for run in ges anl; do
 
-         for type in ps t q uv; do
+#         for type in ps t q uv; do
+         for type in q, gps; do
 
          
             cat << EOF > input
@@ -133,10 +134,10 @@ EOF
        
             echo " execfile completed "
 
-            for file in ${type}*stas; do
-               ${COMPRESS} ${file}
-               mv -f ${file}.${Z} ${savedir}/${run}_${file}.${PDATE}.${Z}
-            done
+#            for file in ${type}*stas; do
+#               ${COMPRESS} ${file}
+#               mv -f ${file}.${Z} ${savedir}/${run}_${file}.${PDATE}.${Z}
+#            done
 
 
             if [ $type == 'uv' ]; then
@@ -151,10 +152,10 @@ EOF
                cp uv_stas.ctl v_stas.ctl
             fi
 
-            for file in *stas.ctl; do
-               ${COMPRESS} ${file}
-               mv -f ${file}.${Z} ${savedir}/${run}_${file}.${Z}
-            done
+#            for file in *stas.ctl; do
+#               ${COMPRESS} ${file}
+#               mv -f ${file}.${Z} ${savedir}/${run}_${file}.${Z}
+#            done
 
          done
 
