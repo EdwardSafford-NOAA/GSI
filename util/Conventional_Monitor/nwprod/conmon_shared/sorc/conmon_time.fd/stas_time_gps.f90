@@ -18,7 +18,7 @@ subroutine stascal_gps(dtype,rdiag,nreal,n,iotype,varqc,ntype,work,&
    integer itype,isubtype,ilat,ilon,iheight,iqc,iuse,imuse
    integer iwgt,ierr1,ierr2,ierr3,iobg,iobgu,iobgv,iqsges
    integer iobsu,iobsv,i,nregion,mregion,np,n,nreal,k,j
-   integer ltype,ntype,intype,insubtype,nn
+   integer ltype,ntype,intype,insubtype,nn, test_height
    real cg_term,pi,tiny
    real valu,valv,val,val2,gesu,gesv,spdb,exp_arg,arg
    real ress,ressu,ressv,valqc,term,wgross,cg_t,wnotgross
@@ -34,11 +34,6 @@ subroutine stascal_gps(dtype,rdiag,nreal,n,iotype,varqc,ntype,work,&
 
  
    print *,'--> stascal_gps'
-   print *,'n, nreal, ntype',n,nreal,ntype
-   print *,rdiag(itype,1),rdiag(ilat,1),rdiag(ilon,1),rdiag(iheight,1)
-   print *,rdiag(iqc,1),rdiag(iuse,1),rdiag(imuse,1),rdiag(ierr1,1),rdiag(iobg,1)
-   print *,rlatmin(1),rlatmax(1),rlonmin(1),rlonmax(1),np,nregion,ntype 
-   print *,iotype(1),iotype(2),iotype(3),iotype(4),iotype(5),iotype(6)
    
    do i=1,n
       val=rdiag(iobg,i)*rdiag(ierr1,i)
@@ -51,7 +46,6 @@ subroutine stascal_gps(dtype,rdiag,nreal,n,iotype,varqc,ntype,work,&
          rat_err2 =0.0
       endif
   
-!     print *,rdiag(imuse,i),rdiag(iobg,i),rdiag(ierr1,i),rdiag(ierr3,i),rat_err2,val2 
       if(rdiag(imuse,i) >0.0) then
          nn=1
       else
@@ -59,15 +53,12 @@ subroutine stascal_gps(dtype,rdiag,nreal,n,iotype,varqc,ntype,work,&
          if(rdiag(ierr3,i) >tiny) nn=3
       endif
 
-!     print *,rdiag(itype,i),rdiag(ierr1,i),rdiag(ierr3,i),rdiag(imuse,i),nn
       do ltype=1,ntype
          intype=int(rdiag(itype,i))
          insubtype=int(rdiag(isubtype,i))
           
-!        print *,intype,iotype(ltype),ltype
-         if(intype == iotype(ltype) .and. insubtype == iosubtype(ltype)) then
+         if(intype == iotype(ltype)) then
 
-!           print *,intype,iotype(ltype),ltype,nn,insubtype,iosubtype(ltype)
             cvar_pg=varqc(ltype,2)
             cvar_b=varqc(ltype,1)
             if (cvar_pg > 0.0 .and. rdiag(imuse,i) >0.0) then
@@ -81,19 +72,19 @@ subroutine stascal_gps(dtype,rdiag,nreal,n,iotype,varqc,ntype,work,&
             endif
 
             valqc = -2.0*rat_err2*term
-!           print *, cg_term,cg_t,cvar_pg,term,valqc
+
             do j=1,nregion
-!              print *,rdiag(ilon,i),rdiag(ilat,i),rlonmin(j),rlatmax(j)
                if(rdiag(ilon,i) >180.0) rdiag(ilon,i)=rdiag(ilon,i)-360.0
 
                if(rdiag(ilon,i)>=rlonmin(j) .and. rdiag(ilon,i)<=rlonmax(j) .and. &
                   rdiag(ilat,i)>=rlatmin(j) .and. rdiag(ilat,i)<=rlatmax(j) ) then
-!                 print *,'j=',j
 
                   do k=1,np
-                     if(rdiag(iheight,i) >=htop(k) .and. rdiag(iheight,i) <= hbot(k))then
-                        work(k,ltype,1,j,nn)=work(k,ltype,1,j,nn)+1.0
+                     test_height = rdiag(iheight,i)/1000
+                     if(test_height >=htop(k) .and. test_height <= hbot(k))then
 
+                        work(k,ltype,1,j,nn)=work(k,ltype,1,j,nn)+1.0
+                         
                         if(rdiag(iwgt,i) <1.0) work(k,ltype,2,j,nn)=work(k,ltype,2,j,nn)+1.0
 
                         ress=rdiag(iobg,i)
@@ -103,13 +94,11 @@ subroutine stascal_gps(dtype,rdiag,nreal,n,iotype,varqc,ntype,work,&
                      work(k,ltype,4,j,nn)=work(k,ltype,4,j,nn)+ress*ress
                      work(k,ltype,5,j,nn)=work(k,ltype,5,j,nn)+val2*rat_err2
                      work(k,ltype,6,j,nn)=work(k,ltype,6,j,nn)+valqc
-                  enddo        !!! enddo k
-               endif       !!! endif j
-            enddo  !! j
-         endif     !!! endif ltype
-!            enddo         !!! enddo region
-!      endif        !!! endif ltype
-      enddo         !!  enddo ltype
+                  enddo  !! enddo k
+               endif     !! endif j
+            enddo        !! j
+         endif           !! endif ltype
+      enddo              !! enddo ltype
 
    enddo            !!! enddo i
 

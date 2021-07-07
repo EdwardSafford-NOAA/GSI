@@ -82,30 +82,18 @@
    ! htop and hbot for gpsro data is height in km, not pressure
    !
    htop_gps(1)  =    0.0;    hbot_gps(1)  = 60.0         ! all levels
-   htop_gps(2)  =    0.0;    hbot_gps(2)  =  2.5
-   htop_gps(3)  =    2.51;   hbot_gps(3)  =  5.0
-   htop_gps(4)  =    5.01;   hbot_gps(4)  =  7.5
-   htop_gps(5)  =    7.51;   hbot_gps(5)  = 10.0
-   htop_gps(6)  =   10.01;   hbot_gps(6)  = 12.5
-   htop_gps(7)  =   12.51;   hbot_gps(7)  = 15.0
-   htop_gps(8)  =   15.01;   hbot_gps(8)  = 17.5
-   htop_gps(9)  =   17.51;   hbot_gps(9)  = 20.0
-   htop_gps(10) =   20.01;   hbot_gps(10) = 22.5
-   htop_gps(11) =   22.51;   hbot_gps(11) = 25.0
-   htop_gps(12) =   25.01;   hbot_gps(12) = 27.5
-   htop_gps(13) =   27.51;   hbot_gps(13) = 30.0
-   htop_gps(14) =   30.01;   hbot_gps(13) = 32.5
-   htop_gps(15) =   32.51;   hbot_gps(13) = 35.0
-   htop_gps(16) =   35.01;   hbot_gps(13) = 37.5
-   htop_gps(17) =   37.51;   hbot_gps(13) = 40.0
-   htop_gps(18) =   40.01;   hbot_gps(13) = 42.5
-   htop_gps(19) =   42.51;   hbot_gps(13) = 45.0
-   htop_gps(20) =   45.01;   hbot_gps(13) = 47.5
-   htop_gps(21) =   47.51;   hbot_gps(13) = 50.0
-   htop_gps(22) =   50.01;   hbot_gps(13) = 52.5
-   htop_gps(23) =   52.51;   hbot_gps(13) = 55.0
-   htop_gps(24) =   55.01;   hbot_gps(13) = 57.5
-   htop_gps(25) =   57.51;   hbot_gps(13) = 60.0
+   htop_gps(2)  =    0.0;    hbot_gps(2)  =  5.0
+   htop_gps(3)  =    5.01;   hbot_gps(3)  = 10.0
+   htop_gps(4)  =   10.01;   hbot_gps(4)  = 15.0
+   htop_gps(5)  =   15.01;   hbot_gps(5)  = 20.0
+   htop_gps(6)  =   20.01;   hbot_gps(6)  = 25.0
+   htop_gps(7)  =   25.01;   hbot_gps(7)  = 30.0
+   htop_gps(8)  =   30.01;   hbot_gps(8)  = 35.0
+   htop_gps(9)  =   35.01;   hbot_gps(9)  = 40.0
+   htop_gps(10) =   40.01;   hbot_gps(10) = 45.0
+   htop_gps(11) =   45.01;   hbot_gps(11) = 50.0
+   htop_gps(12) =   50.01;   hbot_gps(12) = 55.0
+   htop_gps(13) =   55.01;   hbot_gps(13) = 60.0
 
 
    call convinfo(iotype_ps,iotype_q,iotype_t,iotype_uv,iotype_gps,ntype_ps,ntype_q,ntype_t,ntype_uv, ntype_gps,&

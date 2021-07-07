@@ -65,7 +65,6 @@
       
       if(trim(ctype) == 'ps' ) then
          ntype_ps=ntype_ps+1
-         print *, 'ntype_ps = ', ntype_ps
          iotype_ps(ntype_ps)=ittype
          iosubtype_ps(ntype_ps)=isubtype
 
@@ -75,7 +74,6 @@
 
       else if(trim(ctype) == 'q') then
          ntype_q=ntype_q+1
-         print *, 'ntype_q = ', ntype_q
          iotype_q(ntype_q)=ittype
          iosubtype_q(ntype_q)=isubtype
          varqc_q(ntype_q,1)=vtar_b
@@ -84,7 +82,6 @@
 
       else if(trim(ctype) == 't') then
          ntype_t=ntype_t+1
-         print *, 'ntype_t = ', ntype_t
          iotype_t(ntype_t)=ittype
          iosubtype_t(ntype_t)=isubtype
          varqc_t(ntype_t,1)=vtar_b
@@ -93,7 +90,6 @@
 
       else if(trim(ctype) == 'uv') then
          ntype_uv=ntype_uv+1
-         print *, 'ntype_uv = ', ntype_uv
          iotype_uv(ntype_uv)=ittype
          iosubtype_uv(ntype_uv)=isubtype
 
@@ -103,15 +99,9 @@
 
       else if(trim(ctype) == 'gps') then
          ntype_gps=ntype_gps+1
-
-!         gps_ctr = gps_ctr + 1
-!         ntype_gps = gps_ctr
-
-         print *, 'ntype_gps, gps_ctr = ', ntype_gps, gps_ctr
          iotype_gps(ntype_gps)=ittype
-         print *, 'iotype_gps(ntype_gps) = ', ntype_gps, iotype_gps(ntype_gps)
-
          iosubtype_gps(ntype_gps)=isubtype
+
          varqc_gps(ntype_gps,1)=vtar_b
          varqc_gps(ntype_gps,2)=vtar_pg
          ituse_gps(ntype_gps)=ituse
@@ -123,10 +113,11 @@
 1030 format(a1,a7,2x,a120)
 
    print *, 'ntype_gps = ', ntype_gps
-   print *, 'iotype_gps = ', iotype_gps
-!   print *, 'iosubtype_gps = ', iosubtype_gps
-   print *, 'ituse_gps     = ', ituse_gps
-!   print *, 'varqc_gps     = ', varqc_gps
+   print *, 'ntype_ps  = ', ntype_ps
+   print *, 'ntype_q   = ', ntype_q 
+   print *, 'ntype_t   = ', ntype_t 
+   print *, 'ntype_uv  = ', ntype_uv
+
    print *, 'end convinfo subroutine'
 
    return
