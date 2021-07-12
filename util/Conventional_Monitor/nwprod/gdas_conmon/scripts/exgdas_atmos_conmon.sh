@@ -225,9 +225,9 @@
       #---------------------------------------
       #  run the horz-hist extraction script
       #
-#      ${USHconmon}/horz_hist.sh
-#      rc_horz_hist=$?
-#      echo "rc_horz_hist = $rc_horz_hist"
+      ${USHconmon}/horz_hist.sh
+      rc_horz_hist=$?
+      echo "rc_horz_hist = $rc_horz_hist"
 
       #---------------------------------------
       #  run the time-vert extraction script
@@ -239,11 +239,11 @@
       #--------------------------------------
       #  optionally run clean_tankdir script
       #   
-#      if [[ ${CLEAN_TANKDIR} -eq 1 ]]; then
-#         ${USHconmon}/clean_tankdir.sh
-#         rc_clean_tankdir=$?
-#         echo "rc_clean_tankdir = $rc_clean_tankdir"
-#      fi
+      if [[ ${CLEAN_TANKDIR} -eq 1 ]]; then
+         ${USHconmon}/clean_tankdir.sh
+         rc_clean_tankdir=$?
+         echo "rc_clean_tankdir = $rc_clean_tankdir"
+      fi
    fi
 
    #####################################################################

@@ -191,10 +191,6 @@ module conmon_process_time_data
 
       read(lunin) idate
 
-      print *, 'idate=',idate 
-      print *,ptop(1),ptop(5)
-      print *,pbot(1),pbot(5)
-
       nobs = 0
       loopd: do  
          read(lunin,IOSTAT=iflag) dtype,nchar,nreal,ii,mype,ioff02
@@ -279,7 +275,7 @@ module conmon_process_time_data
       !  NOTE:  I think the *work arrays don't need to be params -- they are
       !  just used here and can then be deallocated w/o issue.
       !========================================================================
-      !
+      
       real(4),dimension(np,100,6,nregion,3), intent(out)  :: twork,uwork,vwork,uvwork
       real(4),dimension(np,100,6,nregion,3)  :: qwork, gpswork
       real(4),dimension(1,100,6,nregion,3)   :: pswork
@@ -294,15 +290,7 @@ module conmon_process_time_data
       integer                                :: nobs = 0
       character(3)                           :: dtype
 
-      integer nchar,nreal,ii,mype,idate,iflag,itype
-      integer lunin,lunot,nreal1,nreal2,ldtype,intype
-      integer ilat,ilon,ipress,iqc,iuse,imuse,iwgt,ierr1
-      integer ierr2,ierr3,ipsobs,iqobs,ioff02
       integer jj, obs_ctr, k,ltype,iregion,ntype_uv
-      integer iobg,iobgu,iobgv
-
-      data lunin / 11 /
-      data lunot / 21 /
 
 
       print *, '--> process_conv_nc'
@@ -438,7 +426,6 @@ module conmon_process_time_data
             print *, 'found nobs in list = ', obs_ctr
             call list_free( list )
       
-            print *, 'iotype_gps = ', iotype_gps 
             call stascal_gps(ctype, rdiag, max_rdiag_reals, nobs, iotype_gps, varqc_gps, ntype_gps, &
                          gpswork, np, htop_gps, hbot_gps, nregion, mregion, &
                          rlatmin, rlatmax, rlonmin, rlonmax, iosubtype_gps)
@@ -449,58 +436,6 @@ module conmon_process_time_data
 
 
       if( allocated( rdiag )) deallocate( rdiag )
-
-
-!      itype=1;ilat=3;ilon=4;ipress=6;iqc=9;iuse=11;imuse=12
-!      iwgt=13;ierr1=14;ierr2=15;ierr3=16;iobg=18;iobgu=18;iobgv=21
-!   
-!      write(6,*) 'input_file = ', input_file
-!      open(lunin,file=input_file,form='unformatted')  
-!      rewind(lunin)
-!
-!      read(lunin) idate
-!
-!      print *, 'idate=',idate 
-!      print *,ptop(1),ptop(5)
-!      print *,pbot(1),pbot(5)
-!
-!      loopd: do  
-!         read(lunin,IOSTAT=iflag) dtype,nchar,nreal,ii,mype,ioff02
-!         if( iflag /= 0 ) exit loopd
-!
-!         allocate(cdiag(ii),rdiag(nreal,ii))
-!         read(lunin,IOSTAT=iflag) cdiag,rdiag
-!
-!         if( iflag /= 0 ) exit loopd
-!
-!
-!         if( adjustl( trim( dtype )) == 'ps') then
-!            print *, ' identified ps case for stascal ' 
-!            call stascal(dtype,rdiag,nreal,ii,iotype_ps,varqc_ps,ntype_ps,&
-!                         pswork,uwork,vwork,1,ptop,pbot,nregion,mregion,&
-!                         rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_ps)
-
-!         else if(trim(dtype) == '  q') then
-!            call stascal(dtype,rdiag,nreal,ii,iotype_q,varqc_q,ntype_q,&
-!                         qwork,uwork,vwork,np,ptopq,pbotq,nregion,mregion,&
-!                         rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_q)
-!
-!         else if(trim(dtype) == '  t') then
-!            call stascal(dtype,rdiag,nreal,ii,iotype_t,varqc_t,ntype_t,&
-!                         twork,uwork,vwork,np,ptop,pbot,nregion,mregion,&
-!                         rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_t)
-!
-!         else if(trim(dtype) == ' uv') then
-!            call stascal(dtype,rdiag,nreal,ii,iotype_uv,varqc_uv,ntype_uv,&
-!                         uvwork,uwork,vwork,np,ptop,pbot,nregion,mregion,&
-!                         rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_uv)
-!         endif
-!          
-!         deallocate( rdiag )
-!
-!      enddo   loopd               !  ending read data do loop
-!    
-!      close(lunin)
 
       print *, '<-- process_conv_nc'
 

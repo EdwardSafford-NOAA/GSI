@@ -82,18 +82,18 @@
    ! htop and hbot for gpsro data is height in km, not pressure
    !
    htop_gps(1)  =    0.0;    hbot_gps(1)  = 60.0         ! all levels
-   htop_gps(2)  =    0.0;    hbot_gps(2)  =  5.0
-   htop_gps(3)  =    5.01;   hbot_gps(3)  = 10.0
-   htop_gps(4)  =   10.01;   hbot_gps(4)  = 15.0
-   htop_gps(5)  =   15.01;   hbot_gps(5)  = 20.0
-   htop_gps(6)  =   20.01;   hbot_gps(6)  = 25.0
-   htop_gps(7)  =   25.01;   hbot_gps(7)  = 30.0
-   htop_gps(8)  =   30.01;   hbot_gps(8)  = 35.0
-   htop_gps(9)  =   35.01;   hbot_gps(9)  = 40.0
-   htop_gps(10) =   40.01;   hbot_gps(10) = 45.0
-   htop_gps(11) =   45.01;   hbot_gps(11) = 50.0
-   htop_gps(12) =   50.01;   hbot_gps(12) = 55.0
-   htop_gps(13) =   55.01;   hbot_gps(13) = 60.0
+   htop_gps(2)  =   55.01;   hbot_gps(2)  = 60.0
+   htop_gps(3)  =   50.01;   hbot_gps(3)  = 55.0
+   htop_gps(4)  =   45.01;   hbot_gps(4)  = 50.0
+   htop_gps(5)  =   40.01;   hbot_gps(5)  = 45.0
+   htop_gps(6)  =   35.01;   hbot_gps(6)  = 40.0
+   htop_gps(7)  =   30.01;   hbot_gps(7)  = 35.0
+   htop_gps(8)  =   25.01;   hbot_gps(8)  = 30.0
+   htop_gps(9)  =   20.01;   hbot_gps(9)  = 25.0
+   htop_gps(10) =   15.01;   hbot_gps(10) = 20.0
+   htop_gps(11) =   10.01;   hbot_gps(11) = 15.0
+   htop_gps(12) =    5.01;   hbot_gps(12) = 10.0
+   htop_gps(13) =    0.0;    hbot_gps(13) =  5.0
 
 
    call convinfo(iotype_ps,iotype_q,iotype_t,iotype_uv,iotype_gps,ntype_ps,ntype_q,ntype_t,ntype_uv, ntype_gps,&
@@ -110,14 +110,14 @@
                  iosubtype_ps,iosubtype_q,iosubtype_t,iosubtype_uv, iosubtype_gps) 
    
 
-!   call creatstas_ctl(dtype_ps,iotype_ps,ituse_ps,100,ntype_ps,1,nregion,18,region,&
-!                     rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_ps) 
+   call creatstas_ctl(dtype_ps,iotype_ps,ituse_ps,100,ntype_ps,1,nregion,18,region,&
+                     rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_ps) 
    call creatstas_ctl(dtype_q,iotype_q,ituse_q,100,ntype_q,np,nregion,18,region,&
                      rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_q) 
-!   call creatstas_ctl(dtype_t,iotype_t,ituse_t,100,ntype_t,np,nregion,18,&
-!                     region,rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_t) 
-!   call creatstas_ctl(dtype_uv,iotype_uv,ituse_uv,100,ntype_uv,np,nregion,18,&
-!                     region,rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_uv) 
+   call creatstas_ctl(dtype_t,iotype_t,ituse_t,100,ntype_t,np,nregion,18,&
+                     region,rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_t) 
+   call creatstas_ctl(dtype_uv,iotype_uv,ituse_uv,100,ntype_uv,np,nregion,18,&
+                     region,rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_uv) 
 
    call creatstas_ctl(dtype_gps,iotype_gps,ituse_gps,100,ntype_gps,np,nregion,18,region,&
                      rlatmin,rlatmax,rlonmin,rlonmax,iosubtype_gps) 
