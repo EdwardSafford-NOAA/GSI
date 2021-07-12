@@ -132,7 +132,7 @@ if [[ $CONMON_CONFIG -ne 1 ]]; then
    #
    #  Number of cycles worth of image data to be retained in tankdir
    #
-   export NUM_IMG_CYCLES=${NUM_IMG_CYCLES:-20}
+   export NUM_IMG_CYCLES=${NUM_IMG_CYCLES:-4}
 
    #
    #  Web server resources include the sever name (WEB_SVR), the user name
