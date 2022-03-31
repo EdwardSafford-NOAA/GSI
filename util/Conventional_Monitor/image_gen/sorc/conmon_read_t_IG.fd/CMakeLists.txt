@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12)
   file(GLOB CONMON_READ_T_IG_SRC ${CMAKE_CURRENT_SOURCE_DIR}/*90 )
   set(CONMON_READ_T_IG_Fortran_FLAGS "-fp-model strict -assume byterecl -convert big_endian -O3 -traceback -D_REAL8_ ")
   set_source_files_properties( ${CONMON_READ_T_IG_SRC} PROPERTIES COMPILE_FLAGS ${CONMON_READ_T_IG_Fortran_FLAGS} )
