@@ -9,7 +9,7 @@ if [[ $CONMON_CONFIG -ne 1 ]]; then
 
    export CONMON_CONFIG=1
 
-   export MY_MACHINE=wcoss_d
+   export MY_MACHINE=wcoss2
 
 
    #-----------------------------------------------------
@@ -40,7 +40,7 @@ if [[ $CONMON_CONFIG -ne 1 ]]; then
    # MY_CONMON should point to your working directory which contains the
    # top level directory to the ConMon package. 
    #
-   export MY_CONMON=/gpfs/dell2/emc/modeling/noscrub/Edward.Safford/GSI/util/Conventional_Monitor
+   export MY_CONMON=/lfs/h2/emc/da/noscrub/Edward.Safford/git/gsi/GSI/util/Conventional_Monitor
 
    
    #---------------------------------------------------------------------
@@ -58,7 +58,7 @@ if [[ $CONMON_CONFIG -ne 1 ]]; then
    #  and the succedding scripts will construct and use subdirectories under
    #  this location.
    #
-   export CONMON_TANKDIR=/u/Edward.Safford/nbns
+   export CONMON_TANKDIR=/lfs/h2/emc/da/noscrub/Edward.Safford/nbns
    export C_TANKverf=${C_TANKverf:-${CONMON_TANKDIR}}
 
    export C_TANKDIR=${CONMON_TANKDIR}/stats/${CONMON_SUFFIX}
@@ -159,20 +159,36 @@ if [[ $CONMON_CONFIG -ne 1 ]]; then
       export SERVICE_PARTITION="service"
 
    elif [[ $MY_MACHINE = "wcoss2" ]]; then
+      module load prod_util/2.0.13
+      module load util_shared/1.4.0
+      module load grib_util/1.2.4
+      module load wgrib2/2.0.8_wmo
+
+      #------------------------
+      # temporary workaround
+      #
+      module use /apps/test/modules
+      module load GrADS/2.2.1-cce-11.0.4
+      export GRADS=`which grads`
+      export STNMAP=`which stnmap`
+      #------------------------
+   
+      export WGRIB2=`which wgrib2`
+      export SUB="qsub"
       export COMPRESS=/usr/bin/gzip
       export UNCOMPRESS="/usr/bin/gunzip -f"
    fi
 
    export Z="gz"
 
-   export ACCOUNT=${ACCOUNT:-}
-   export PROJECT=
-   export JOB_QUEUE=
+   export ACCOUNT=${ACCOUNT:-GFS-DEV}
+   export PROJECT=${PROJECT:-GDAS-DEV}
+   export JOB_QUEUE=${JOB_QUEUE:-dev}
  
-   export C_STMP=${C_STMP:-/gpfs/dell2/stmp}
-   export C_STMP_USER=${C_STMP_USER:-${C_STMP}/${LOGNAME}}
-   export C_PTMP=${C_PTMP:-/gpfs/dell2/ptmp}
-   export C_PTMP_USER=${C_PTMP_USER:-${C_PTMP}/${LOGNAME}}
+   export MY_STMP=${MY_STMP:-/lfs/h2/emc/stmp}
+   export C_STMP_USER=${C_STMP_USER:-${MY_STMP}/${LOGNAME}}
+   export MY_PTMP=${MY_PTMP:-/lfs/h2/emc/ptmp}
+   export C_PTMP_USER=${C_PTMP_USER:-${MY_PTMP}/${LOGNAME}}
 
    export C_LOGDIR=${C_PTMP_USER}/logs/${CONMON_SUFFIX}/${RUN}/conmon
    export WORK_conmon=${WORK_conmon:-${C_STMP_USER}/${CONMON_SUFFIX}/${RUN}/ConMon}

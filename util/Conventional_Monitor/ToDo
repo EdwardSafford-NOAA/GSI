@@ -1,8 +1,9 @@
-	Package install
-	Package build
-	Data extraction
-	Data copy
-	image generation
-	file transfer
+N/a	Package install
+Done	Package build
+N/a	Data extraction
+N/a	Data copy
+N/a	image generation
+Done	file transfer
 	html generation
 	base file creation
+        image gen for horiz plots not working (still?)

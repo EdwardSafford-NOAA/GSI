@@ -65,6 +65,7 @@ fi
 
 
 logfile=${C_LOGDIR}/transfer_${CMON_SUFFIX}.log
+errfile=${C_LOGDIR}/transfer_${CMON_SUFFIX}.err
 
 export JOB_QUEUE=dev_transfer
 WEBDIR=${WEBDIR}/${CMON_SUFFIX}/${RUN}
@@ -82,6 +83,12 @@ if [[ $MY_MACHINE == "wcoss_d" || $MY_MACHINE == "wcoss_c" ]]; then
    $SUB -P $PROJECT -q $JOB_QUEUE -o ${logfile} -M 80 -W 1:30 \
         -R affinity[core] -J ${jobname} -cwd ${PWD} \
         ${C_IG_SCRIPTS}/transfer_imgs.sh
+
+elif [[ $MY_MACHINE = "wcoss2" ]]; then
+   $SUB -q $JOB_QUEUE -A $ACCOUNT -o ${logfile} -e ${errfile} \
+        -V -l select=1:mem=500M -l walltime=45:00 -N ${jobname} \
+	${C_IG_SCRIPTS}/transfer_imgs.sh
+
 else
    echo "Unable to transfer files from $MY_MACHINE to $WEBSVR."
    echo "Manual intervention is required."
